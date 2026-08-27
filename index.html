@@ -303,17 +303,44 @@
 
   <!-- பொது அறிவிப்புப் பலகை மற்றும் ஸ்டிக்கி நோட் பகுதி -->
 <div style="margin: 10px 0;">
-  <div class="sticky-notice-container" style="display: flex; justify-content: space-between; align-items: stretch; gap: 15px; flex-wrap: wrap;">
+  <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 15px; flex-wrap: wrap;">
     
-    <!-- இடதுபுறம் முக்கிய அறிவிப்புப் பலகை -->
-    <div class="notice-card" id="noticeBoardCard" style="flex: 1; min-width: 280px; background: #fff; border-left: 4px solid #0284c7; padding: 12px; margin-bottom: 0;">
-      <div style="flex: 1;">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
-          <span style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">📌 புதிய அறிவிப்பு</span>
-          <span id="noticeDateTag" style="background: #bfdbfe; color: #1e3a8a; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">தேதி: 27/08/2026</span>
-        </div>
-        <p id="noticeContentText" style="margin: 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5; font-weight: 500;">மாவட்ட கல்வி அலுவலக அறிவிப்புப் பலகைச் செய்திகள் இங்கே தோன்றும்...</p>
+    <!-- இடதுபுறம் முக்கிய அறிவிப்புப் பலகை (வெறும் பார்வைக்கு மட்டும்) -->
+    <div style="flex: 1; min-width: 280px; background: #fff; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+        <span style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">📌 புதிய அறிவிப்பு</span>
+        <span id="noticeDateTag" style="background: #bfdbfe; color: #1e3a8a; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">தேதி: 27/08/2026</span>
       </div>
+      <p id="noticeContentText" style="margin: 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5; font-weight: 500;">மாவட்ட கல்வி அலுவலக அறிவிப்புப் பலகைச் செய்திகள் இங்கே தோன்றும்...</p>
+    </div>
+
+    <!-- வலதுபுறம் அந்தப் பள்ளிக்குரிய ஸ்டிக்கி நோட் (Pinned Sticky Note) -->
+    <div class="sticky-pin-card" style="background: #fef08a; color: #713f12; padding: 15px 20px; border-radius: 4px; width: 250px; box-shadow: 3px 4px 10px rgba(0,0,0,0.15); position: relative; font-family: 'Comic Sans MS', cursive, sans-serif, Arial; transform: rotate(1deg); border-top: 5px solid #facc15; display: flex; flex-direction: column; justify-content: center;">
+      <div style="font-size: 0.75rem; font-weight: bold; color: #b45309; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">🏫 உங்கள் பள்ளிக்கான சுற்றறிக்கை (Circular):</div>
+      <div id="schoolStickyNoticeContent" style="font-size: 0.90rem; line-height: 1.4;">
+        தற்பொழுது சிறப்பு அறிவிப்புகள் எதுவும் இல்லை.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.sticky-pin-card::before {
+  content: "📌";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+.sticky-pin-card:hover {
+  transform: rotate(0deg) scale(1.02);
+  transition: transform 0.2s ease;
+}
+</style>
+
       <!-- அட்மின் மட்டும் அறிவிப்பை மாற்றும் பகுதி -->
       <div id="adminNoticeAction" style="display: none; display: flex; gap: 6px; margin-top: 8px;">
         <button class="btn btn-notice btn-sm" onclick="openNoticeModal()">✏️ புதிய அறிவிப்பு</button>
@@ -2787,7 +2814,66 @@
 
   };
 </script>
+<script>
+// அட்மின் பேனலில் உள்ள ஸ்கூல் செலக்ட் பாக்ஸில் பள்ளிகளின் பெயர்களை நிரப்புதல்
+function populateAdminSchoolDropdown() {
+  const selectEl = document.getElementById('adminCircularSchoolSelect');
+  if (!selectEl) return;
+  
+  selectEl.innerHTML = '<option value="">-- பள்ளியைத் தேர்ந்தெடுக்கவும் --</option>';
+  
+  if (typeof SCHOOL_NAMES !== 'undefined') {
+    for (let id in SCHOOL_NAMES) {
+      let opt = document.createElement('option');
+      opt.value = id;
+      opt.innerText = SCHOOL_NAMES[id];
+      selectEl.appendChild(opt);
+    }
+  }
+}
 
+// அட்மின் குறிப்பிட்ட பள்ளிக்கு சுற்றறிக்கையைச் சேமித்தல்
+function saveAdminSchoolCircular() {
+  const schoolId = document.getElementById('adminCircularSchoolSelect').value;
+  const msg = document.getElementById('adminCircularMsgInput').value;
+
+  if (!schoolId) {
+    alert('தயவுசெய்து உரிய பள்ளியைத் தேர்ந்தெடுக்கவும்!');
+    return;
+  }
+  if (!msg.trim()) {
+    alert('சுற்றறிக்கை செய்தியை உள்ளிடவும்!');
+    return;
+  }
+
+  localStorage.setItem('school_circular_' + schoolId, msg);
+  alert('சுற்றறிக்கை வெற்றிகரமாகச் சேமிக்கப்பட்டது!');
+  document.getElementById('adminCircularMsgInput').value = '';
+}
+
+// லாகின் செய்துள்ள பள்ளிக்குரிய சுற்றறிக்கையை ஸ்டிக்கி நோட்டில் காட்டுவது
+function loadSchoolStickyCircular() {
+  const stickyEl = document.getElementById('schoolStickyNoticeContent');
+  if (!stickyEl) return;
+
+  if (typeof currentUser !== 'undefined' && currentUser && currentUser.schoolId) {
+    const customMsg = localStorage.getItem('school_circular_' + currentUser.schoolId);
+    if (customMsg) {
+      stickyEl.innerText = customMsg;
+    } else {
+      stickyEl.innerText = "உங்களுக்கு புதிய சுற்றறிக்கைகள் எதுவும் இல்லை.";
+    }
+  } else {
+    stickyEl.innerText = "பள்ளிகள் லாகின் செய்தவுடன் அவர்களுக்கான சுற்றறிக்கை இங்கே தெரியும்.";
+  }
+}
+
+// பக்கம் லோட் ஆகும்போது இவை இயங்க வேண்டும்
+window.addEventListener('DOMContentLoaded', () => {
+  populateAdminSchoolDropdown();
+  loadSchoolStickyCircular();
+});
+</script>
 </body>
 </html>
 
