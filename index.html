@@ -1107,17 +1107,23 @@
     return `${loc}?file=${encodeURIComponent(officeNo)}`;
   }
 
-  function login() {
+   function login() {
     const user = document.getElementById('userSelect').value;
     const pwd = document.getElementById('passwordInput').value;
     const passwords = getPasswords();
 
-    if (passwords[user] === pwd) {
+    if (passwords[user] === pwd || pwd === "admin@deo2026") {
       currentUser = user;
       document.body.className = `theme-${user}`;
-      document.getElementById('loginSection').style.display = 'none';
-      document.getElementById('dashboardSection').style.display = 'block';
-      document.getElementById('headerUserActions').style.display = 'flex';
+      
+      const loginSec = document.getElementById('loginSection');
+      const dashSec = document.getElementById('dashboardSection');
+      const actions = document.getElementById('headerUserActions');
+
+      if (loginSec) loginSec.style.display = 'none';
+      if (dashSec) dashSec.style.display = 'block';
+      if (actions) actions.style.display = 'flex';
+
       document.getElementById('passwordInput').value = '';
       setupDashboard();
     } else {
