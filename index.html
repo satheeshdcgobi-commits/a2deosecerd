@@ -93,6 +93,21 @@
       font-weight: bold;
     }
 
+    .notice-card {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid #bfdbfe;
+      border-left: 6px solid #2563eb;
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
     .kural-card {
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
       border: 1px solid #fde68a;
@@ -228,38 +243,6 @@
     .grade-b { background: #fef3c7; color: #b45309; border: 1px solid #fde047; }
     .grade-c { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
-    /* Sticky Note Style for School Circular */
-    .sticky-pin-card {
-      background: #fef08a;
-      color: #713f12;
-      padding: 15px 20px;
-      border-radius: 4px;
-      width: 260px;
-      box-shadow: 3px 4px 10px rgba(0,0,0,0.15);
-      position: relative;
-      font-family: 'Comic Sans MS', cursive, sans-serif, Arial;
-      transform: rotate(1deg);
-      border-top: 5px solid #facc15;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      box-sizing: border-box;
-      flex-shrink: 0;
-    }
-    .sticky-pin-card::before {
-      content: "📌";
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.3rem;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    }
-    .sticky-pin-card:hover {
-      transform: rotate(0deg) scale(1.02);
-      transition: transform 0.2s ease;
-    }
-
     .modal {
       display: none;
       position: fixed;
@@ -309,36 +292,87 @@
     </div>
   </div>
 
-  <!-- புதிய அறிவிப்புப் பலகை மற்றும் பள்ளி சுற்றறிக்கை ஸ்டிக்கி நோட் பகுதி -->
-  <div style="margin: 10px 0;">
-    <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 15px; flex-wrap: wrap;">
-      
-      <!-- இடதுபுறம் முக்கிய அறிவிப்புப் பலகை (அட்மினுக்கு மட்டும் எடிட் பட்டன் தெரியும்) -->
-      <div style="flex: 1; min-width: 280px; background: #fff; border-left: 4px solid #0284c7; padding: 14px 18px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
-            <span style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">📌 புதிய அறிவிப்பு</span>
-            <span id="noticeDateTag" style="background: #bfdbfe; color: #1e3a8a; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">தேதி: --/--/----</span>
-          </div>
-          <p id="noticeContentText" style="margin: 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5; font-weight: 500;">மாவட்ட கல்வி அலுவலக அறிவிப்புப் பலகைச் செய்திகள் இங்கே தோன்றும்...</p>
-        </div>
-        
-        <!-- அட்மின் மட்டும் அறிவிப்பை மாற்றும் பகுதி -->
-        <div id="adminNoticeAction" style="display: none; margin-top: 10px;">
-          <button class="btn btn-notice btn-sm" onclick="openNoticeModal()">✏️ புதிய அறிவிப்பு</button>
-        </div>
-      </div>
-
-      <!-- வலதுபுறம் பள்ளி லாகின் செய்யும்போது மட்டும் தெரியும் 'Pinned Sticky Notes' (School Circular) பகுதி -->
-      <div id="schoolStickyNoteSection" class="sticky-pin-card" style="display: none;">
-        <div style="font-size: 0.75rem; font-weight: bold; color: #b45309; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">🏫 உங்கள் பள்ளிக்கான சுற்றறிக்கை:</div>
-        <div id="schoolStickyNoticeContent" style="font-size: 0.90rem; line-height: 1.4;">
-          உங்களுக்கு புதிய சுற்றறிக்கைகள் எதுவும் இல்லை.
-        </div>
-      </div>
-
+  <!-- QR Scan Direct View -->
+  <div id="directScanViewCard" class="card" style="display:none; border: 3px solid #0284c7; background: #f0f9ff;">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #bae6fd; padding-bottom:8px; margin-bottom:12px;">
+      <h3 style="margin:0; color:#0369a1;">📱 உயர் அலுவலர் கோப்பு நேரடி ஆய்வு அட்டை (Live Officer Inspection)</h3>
+      <button class="btn btn-sm btn-danger" onclick="closeDirectScanView()">முகப்பு செல் ✕</button>
     </div>
+    <div id="directScanDetails"></div>
   </div>
+
+  <!-- பொது அறிவிப்புப் பலகை மற்றும் ஸ்டிக்கி நோட் பகுதி -->
+<div style="margin: 10px 0;">
+  <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 15px; flex-wrap: wrap;">
+    
+    <!-- இடதுபுறம் முக்கிய அறிவிப்புப் பலகை (வெறும் பார்வைக்கு மட்டும்) -->
+    <div style="flex: 1; min-width: 280px; background: #fff; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+        <span style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">📌 புதிய அறிவிப்பு</span>
+        <span id="noticeDateTag" style="background: #bfdbfe; color: #1e3a8a; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">தேதி: 27/08/2026</span>
+      </div>
+      <p id="noticeContentText" style="margin: 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5; font-weight: 500;">மாவட்ட கல்வி அலுவலக அறிவிப்புப் பலகைச் செய்திகள் இங்கே தோன்றும்...</p>
+    </div>
+
+    <!-- வலதுபுறம் அந்தப் பள்ளிக்குரிய ஸ்டிக்கி நோட் (Pinned Sticky Note) -->
+    <div class="sticky-pin-card" style="background: #fef08a; color: #713f12; padding: 15px 20px; border-radius: 4px; width: 250px; box-shadow: 3px 4px 10px rgba(0,0,0,0.15); position: relative; font-family: 'Comic Sans MS', cursive, sans-serif, Arial; transform: rotate(1deg); border-top: 5px solid #facc15; display: flex; flex-direction: column; justify-content: center;">
+      <div style="font-size: 0.75rem; font-weight: bold; color: #b45309; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">🏫 உங்கள் பள்ளிக்கான சுற்றறிக்கை (Circular):</div>
+      <div id="schoolStickyNoticeContent" style="font-size: 0.90rem; line-height: 1.4;">
+        தற்பொழுது சிறப்பு அறிவிப்புகள் எதுவும் இல்லை.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.sticky-pin-card::before {
+  content: "📌";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+.sticky-pin-card:hover {
+  transform: rotate(0deg) scale(1.02);
+  transition: transform 0.2s ease;
+}
+</style>
+
+      <!-- அட்மின் மட்டும் அறிவிப்பை மாற்றும் பகுதி -->
+      <div id="adminNoticeAction" style="display: none; display: flex; gap: 6px; margin-top: 8px;">
+        <button class="btn btn-notice btn-sm" onclick="openNoticeModal()">✏️ புதிய அறிவிப்பு</button>
+      </div>
+    </div>
+
+    <!-- வலதுபுறம் பின் செய்யப்பட்ட ஸ்டிக்கி நோட் (Pinned Stick Notice) -->
+    <div class="sticky-pin-card" style="background: #fef08a; color: #713f12; padding: 15px 20px; border-radius: 4px; width: 250px; box-shadow: 3px 4px 10px rgba(0,0,0,0.15); position: relative; font-family: 'Comic Sans MS', cursive, sans-serif, Arial; transform: rotate(1deg); border-top: 5px solid #facc15; display: flex; flex-direction: column; justify-content: center;">
+      <div style="font-size: 0.75rem; font-weight: bold; color: #b45309; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">🏫 உங்கள் பள்ளிக்கான அறிவிப்பு:</div>
+      <div id="stickyNoticeContent" style="font-size: 0.90rem; line-height: 1.4;">
+        பள்ளிகள் கவனத்திற்கு: நிலுவையில் உள்ள கோப்புகளை விரைந்து முடிக்க அறிவுறுத்தப்படுகிறது.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.sticky-pin-card::before {
+  content: "📌";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+.sticky-pin-card:hover {
+  transform: rotate(0deg) scale(1.02);
+  transition: transform 0.2s ease;
+}
+</style>
 
   <!-- தினமொரு திருக்குறள் -->
   <div class="kural-card">
@@ -400,38 +434,13 @@
       </div>
     </div>
 
-    <!-- அட்மின் கட்டுப்பாட்டுப் பலகம் மற்றும் 'School Circular' பகுதி (அட்மின் லாகின் செய்தால் மட்டுமே காட்டும்) -->
-    <div id="adminSchoolCircularPanel" class="card" style="display: none; background: #f8fafc; border: 1px solid #cbd5e1;">
-      <h3 style="margin-top: 0; color: var(--gov-dark); font-size: 1.1rem;">அட்மின் கட்டுப்பாட்டுப் பலகம் (Admin Panel)</h3>
-      <p style="margin: 0 0 15px 0; font-size: 0.85rem; color: #64748b;">பிரிவு எழுத்தர் - பிரிவு அ2</p>
-      
-      <div style="border-top: 1px solid var(--border); padding-top: 15px;">
-        <h4 style="color: #0f172a; font-size: 1rem; margin-bottom: 10px;">📢 School Circular (பள்ளி சுற்றறிக்கை அனுப்புதல்)</h4>
-        <div style="display: grid; gap: 10px;">
-          <div>
-            <label>பள்ளியைத் தேர்ந்தெடுக்கவும்:</label>
-            <select id="adminCircularSchoolSelect" class="form-control">
-              <option value="">-- பள்ளியைத் தேர்ந்தெடுக்கவும் --</option>
-            </select>
-          </div>
-          <div>
-            <label>சுற்றறிக்கை செய்தி:</label>
-            <textarea id="adminCircularMsgInput" rows="3" placeholder="குறிப்பிட்ட பள்ளிக்கு அனுப்ப வேண்டிய செய்தியை இங்கே தட்டச்சு செய்யவும்..."></textarea>
-          </div>
-          <div>
-            <button class="btn btn-primary btn-sm" onclick="saveAdminSchoolCircular()">📤 சுற்றறிக்கையைப் பதிவு செய்</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- பள்ளி செயல்பாட்டு மதிப்பீட்டு அட்டை -->
     <div id="scorecardSection" class="card" style="display: none; border-left: 6px solid #0284c7; background: #f8fafc;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <h3 style="margin:0; color:#0369a1;">📊 பள்ளி வாரியான செயல்பாட்டு மதிப்பீட்டு அட்டை (School Compliance & Performance Scorecard)</h3>
         <button class="btn btn-sm btn-secondary" onclick="toggleScorecard()">மூடு ✕</button>
       </div>
-      <p style="margin:0 0 12px 0; font-size:0.84rem; color:#475569;">பள்ளிகள் அனுப்பிய மொத்தக் கோப்புகள், தீர்வு செய்யப்பட்ட விகிதம் மற்றும் Return சதவீத அடிப்படையில் கணக்கிட்டப்பட்ட தரம்:</p>
+      <p style="margin:0 0 12px 0; font-size:0.84rem; color:#475569;">பள்ளிகள் அனுப்பிய மொத்தக் கோப்புகள், தீர்வு செய்யப்பட்ட விகிதம் மற்றும் Return சதவீத அடிப்படையில் கணக்கிடப்பட்ட தரம்:</p>
       <div style="overflow-x:auto;">
         <table>
           <thead>
@@ -870,10 +879,9 @@
       <label>அறிவிப்பு / சுற்றறிக்கை விவரம்:</label>
       <textarea id="noticeInputContent" rows="4" placeholder="அனைத்துப் பள்ளிகளுக்கும் தெரிவிக்க வேண்டிய தகவல்களை உள்ளிடவும்..."></textarea>
     </div>
-    <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
+    <div style="display:flex; gap:10px; margin-top:15px;">
       <button onclick="saveNoticeBoardData()" id="publishNoticeBtn" class="btn btn-notice" style="flex:1;">கிளவுடில் வெளியிடு (Publish)</button>
-      <button onclick="broadcastNoticeToSchools()" class="btn btn-ja" style="flex:1;" title="அனைத்து பள்ளிகளுக்கும் WhatsApp மூலம் அனுப்ப">💬 WhatsApp Broadcast</button>
-      <button onclick="closeNoticeModal()" class="btn btn-danger">மூடு</button>
+      <button onclick="closeNoticeModal()" class="btn btn-danger" style="flex:1;">மூடு</button>
     </div>
   </div>
 </div>
@@ -895,11 +903,11 @@
     </div>
     <div class="form-group">
       <label>School JA WhatsApp No (91 உடன்):</label>
-      <input type="text" id="contactJaWhatsappInput" placeholder="எ.கா. 919443000001">
+      <input type="text" id="contactJaWhatsappInput" placeholder="எ.கா. 919876543210">
     </div>
     <div class="form-group">
       <label>School HM WhatsApp No (91 உடன்):</label>
-      <input type="text" id="contactHmWhatsappInput" placeholder="எ.கா. 919443000011">
+      <input type="text" id="contactHmWhatsappInput" placeholder="எ.கா. 919876543211">
     </div>
     <div style="display:flex; gap:10px; margin-top:15px;">
       <button onclick="saveContactDetails()" class="btn" style="flex:1;">சேமி</button>
@@ -988,8 +996,7 @@
 
   function formatTamilDate(dateStr) {
     if (!dateStr) return "-";
-    const cleanStr = String(dateStr).split('T')[0];
-    const parts = cleanStr.split('-');
+    const parts = String(dateStr).split('T')[0].split('-');
     if (parts.length === 3) {
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
@@ -997,12 +1004,7 @@
   }
 
   function getNoticeBoardData() {
-    const saved = JSON.parse(localStorage.getItem('system_notice_v3'));
-    if (saved) return saved;
-    return {
-      date: new Date().toISOString().slice(0, 10),
-      content: DEFAULT_NOTICE.content
-    };
+    return JSON.parse(localStorage.getItem('system_notice_v3')) || DEFAULT_NOTICE;
   }
 
   function renderNoticeBoard(noticeData) {
@@ -1106,23 +1108,22 @@
     return memoryFiles.find(f => String(f.officeNo).trim().toLowerCase() === target) || null;
   }
 
+  function getFileScanURL(officeNo) {
+    const loc = window.location.href.split('?')[0];
+    return `${loc}?file=${encodeURIComponent(officeNo)}`;
+  }
+
   function login() {
     const user = document.getElementById('userSelect').value;
     const pwd = document.getElementById('passwordInput').value;
     const passwords = getPasswords();
 
-    if (passwords[user] === pwd || pwd === "admin@deo2026") {
+    if (passwords[user] === pwd) {
       currentUser = user;
       document.body.className = `theme-${user}`;
-      
-      const loginSec = document.getElementById('loginSection');
-      const dashSec = document.getElementById('dashboardSection');
-      const actions = document.getElementById('headerUserActions');
-
-      if (loginSec) loginSec.style.display = 'none';
-      if (dashSec) dashSec.style.display = 'block';
-      if (actions) actions.style.display = 'flex';
-
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('dashboardSection').style.display = 'block';
+      document.getElementById('headerUserActions').style.display = 'flex';
       document.getElementById('passwordInput').value = '';
       setupDashboard();
     } else {
@@ -1133,18 +1134,9 @@
   function logout() {
     currentUser = null;
     document.body.className = 'theme-ADMIN';
-    const loginSec = document.getElementById('loginSection');
-    const dashSec = document.getElementById('dashboardSection');
-    const actions = document.getElementById('headerUserActions');
-
-    if (loginSec) loginSec.style.display = 'block';
-    if (dashSec) dashSec.style.display = 'none';
-    if (actions) actions.style.display = 'none';
-    
-    const adminNoticeAction = document.getElementById('adminNoticeAction');
-    const schoolStickyNoteSection = document.getElementById('schoolStickyNoteSection');
-    if (adminNoticeAction) adminNoticeAction.style.display = 'none';
-    if (schoolStickyNoteSection) schoolStickyNoteSection.style.display = 'none';
+    document.getElementById('dashboardSection').style.display = 'none';
+    document.getElementById('headerUserActions').style.display = 'none';
+    document.getElementById('loginSection').style.display = 'block';
   }
 
   function setupDashboard() {
@@ -1152,43 +1144,19 @@
     document.getElementById('currentUserHeading').innerText = isAdmin ? "பிரிவு எழுத்தர் மேலாண்மை (பிரிவு : அ2)" : SCHOOL_NAMES[currentUser];
     document.getElementById('userRoleText').innerText = isAdmin ? "உதவியாளர் : து.சதீஷ்குமார் | நேரலை கிளவுட் தளம்" : "பள்ளி பயனர் பிரிவு";
     
-    const schoolSpecificFilter = document.getElementById('schoolSpecificFilter');
-    const scorecardBtn = document.getElementById('scorecardBtn');
-    const archiveBtn = document.getElementById('archiveBtn');
-    const monthlyReportBtn = document.getElementById('monthlyReportBtn');
-    const adminConsolidatedPendingBtn = document.getElementById('adminConsolidatedPendingBtn');
-    const handoverBtn = document.getElementById('handoverBtn');
-    const schoolPendingSlipBtn = document.getElementById('schoolPendingSlipBtn');
-    const exportPendingBtn = document.getElementById('exportPendingBtn');
-    const adminEntryContainer = document.getElementById('adminEntryContainer');
-    const schoolSearchContainer = document.getElementById('schoolSearchContainer');
-    const adminNoticeAction = document.getElementById('adminNoticeAction');
-    const adminSchoolCircularPanel = document.getElementById('adminSchoolCircularPanel');
-    const schoolStickyNoteSection = document.getElementById('schoolStickyNoteSection');
-
-    if (schoolSpecificFilter) schoolSpecificFilter.style.display = isAdmin ? 'inline-block' : 'none';
-    if (scorecardBtn) scorecardBtn.style.display = isAdmin ? 'inline-block' : 'none';
-    if (archiveBtn) archiveBtn.style.display = isAdmin ? 'inline-block' : 'none';
-    if (monthlyReportBtn) monthlyReportBtn.style.display = isAdmin ? 'inline-block' : 'none';
-    if (adminConsolidatedPendingBtn) adminConsolidatedPendingBtn.style.display = isAdmin ? 'inline-block' : 'none';
-    if (handoverBtn) handoverBtn.style.display = isAdmin ? 'inline-block' : 'none';
-    if (schoolPendingSlipBtn) schoolPendingSlipBtn.style.display = !isAdmin ? 'inline-block' : 'none';
-    if (exportPendingBtn) exportPendingBtn.style.display = isAdmin ? 'inline-block' : 'none';
-    if (adminEntryContainer) adminEntryContainer.style.display = isAdmin ? 'block' : 'none';
-    if (schoolSearchContainer) schoolSearchContainer.style.display = isAdmin ? 'none' : 'block';
+    document.getElementById('adminNoticeAction').style.display = isAdmin ? 'flex' : 'none';
+    document.getElementById('schoolSpecificFilter').style.display = isAdmin ? 'inline-block' : 'none';
+    document.getElementById('scorecardBtn').style.display = isAdmin ? 'inline-block' : 'none';
+    document.getElementById('archiveBtn').style.display = isAdmin ? 'inline-block' : 'none';
+    document.getElementById('monthlyReportBtn').style.display = isAdmin ? 'inline-block' : 'none';
+    document.getElementById('adminConsolidatedPendingBtn').style.display = isAdmin ? 'inline-block' : 'none';
+    document.getElementById('handoverBtn').style.display = isAdmin ? 'inline-block' : 'none';
+    document.getElementById('schoolPendingSlipBtn').style.display = !isAdmin ? 'inline-block' : 'none';
+    document.getElementById('exportPendingBtn').style.display = isAdmin ? 'inline-block' : 'none';
+    document.getElementById('adminEntryContainer').style.display = isAdmin ? 'block' : 'none';
+    document.getElementById('schoolSearchContainer').style.display = isAdmin ? 'none' : 'block';
     
-    if (adminNoticeAction) adminNoticeAction.style.display = isAdmin ? 'block' : 'none';
-    if (adminSchoolCircularPanel) adminSchoolCircularPanel.style.display = isAdmin ? 'block' : 'none';
-    if (schoolStickyNoteSection) schoolStickyNoteSection.style.display = !isAdmin ? 'block' : 'none';
-
-    if (isAdmin) {
-      populateAdminSchoolDropdown();
-    } else {
-      loadSchoolStickyCircular(currentUser);
-    }
-
-    const entryOfficeDate = document.getElementById('entryOfficeDate');
-    if (entryOfficeDate) entryOfficeDate.valueAsDate = new Date();
+    document.getElementById('entryOfficeDate').valueAsDate = new Date();
 
     currentFilter = 'ALL';
     currentCategoryFilter = 'ALL';
@@ -1202,48 +1170,6 @@
     renderDashboard();
     syncDataFromCloud();
     checkSchoolUrgentAlerts();
-  }
-
-  function populateAdminSchoolDropdown() {
-    const selectEl = document.getElementById('adminCircularSchoolSelect');
-    if (!selectEl) return;
-    selectEl.innerHTML = '<option value="">-- பள்ளியைத் தேர்ந்தெடுக்கவும் --</option>';
-    for (let id in SCHOOL_NAMES) {
-      let opt = document.createElement('option');
-      opt.value = id;
-      opt.innerText = SCHOOL_NAMES[id];
-      selectEl.appendChild(opt);
-    }
-  }
-
-  function saveAdminSchoolCircular() {
-    const schoolId = document.getElementById('adminCircularSchoolSelect').value;
-    const msg = document.getElementById('adminCircularMsgInput').value;
-
-    if (!schoolId) {
-      alert('தயவுசெய்து உரிய பள்ளியைத் தேர்ந்தெடுக்கவும்!');
-      return;
-    }
-    if (!msg.trim()) {
-      alert('சுற்றறிக்கை செய்தியை உள்ளிடவும்!');
-      return;
-    }
-
-    localStorage.setItem('school_circular_' + schoolId, msg);
-    alert('சுற்றறிக்கை வெற்றிகரமாகச் சேமிக்கப்பட்டது!');
-    document.getElementById('adminCircularMsgInput').value = '';
-  }
-
-  function loadSchoolStickyCircular(schoolId) {
-    const stickyEl = document.getElementById('schoolStickyNoticeContent');
-    if (!stickyEl) return;
-
-    const customMsg = localStorage.getItem('school_circular_' + schoolId);
-    if (customMsg) {
-      stickyEl.innerText = customMsg;
-    } else {
-      stickyEl.innerText = "உங்களுக்கு புதிய சுற்றறிக்கைகள் எதுவும் இல்லை.";
-    }
   }
 
   function checkSchoolUrgentAlerts() {
@@ -1485,6 +1411,9 @@
       if (file.isPinned) tr.className = 'pinned-row';
 
       const safeOfficeNo = encodeURIComponent(file.officeNo);
+      let receiptBtnHTML = isAdmin ? `<button class="btn btn-sm btn-success" onclick="generateReceiptPDF(decodeURIComponent('${safeOfficeNo}'))">ரசீது PDF</button>` : '';
+
+      // கூடுதல் வசதி 3: கோப்பு எண் மூலமாக உடனடிப் பின்தொடர்தல் குறிப்புகள் (Quick Note Addition)
       const quickNote = file.quickNote || '';
 
       tr.innerHTML = `
@@ -1511,6 +1440,7 @@
         <td>
           <div style="display:flex; gap:3px; flex-wrap:wrap;">
             <button class="btn btn-sm btn-secondary" onclick="generateHistoryPDF(decodeURIComponent('${safeOfficeNo}'))">வரலாறு PDF</button>
+            ${receiptBtnHTML}
             ${isAdmin ? `
               <button class="btn btn-sm btn-ja" onclick="sendSingleFileWhatsApp(decodeURIComponent('${safeOfficeNo}'))" title="WhatsApp பகிர்வு">💬 WA</button>
               <button class="btn btn-sm" onclick="openStatusModal(decodeURIComponent('${safeOfficeNo}'))">நிலை</button>
@@ -1527,6 +1457,7 @@
     });
   }
 
+  // Quick Note சேமிக்கும் வசதி
   async function saveQuickNote(officeNo, noteText) {
     const file = getFileSafely(officeNo);
     if(!file) return;
@@ -1563,12 +1494,11 @@
     }
 
     const nowTimeStr = new Date().toLocaleTimeString('ta-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const rawDateVal = document.getElementById('entryOfficeDate').value;
-    const formattedEntryDate = formatTamilDate(rawDateVal);
+    const nowDateStr = formatTamilDate(new Date().toISOString().slice(0,10));
 
     const newEntry = {
       officeNo: officeNo,
-      officeDate: rawDateVal,
+      officeDate: document.getElementById('entryOfficeDate').value,
       prevRefNo: document.getElementById('entryPrevRefNo').value.trim(),
       schoolId: document.getElementById('entrySchool').value,
       schoolRegNo: document.getElementById('entrySchoolRegNo').value.trim() || "-",
@@ -1588,7 +1518,7 @@
       history: [
         {
           stage: "மனு பெறப்பட்டு பதிவு செய்யப்பட்டது (பிரிவு: அ2)",
-          date: `${formattedEntryDate} ${nowTimeStr}`,
+          date: `${nowDateStr} ${nowTimeStr}`,
           officer: "பிரிவு எழுத்தர் (து.சதீஷ்குமார்)",
           remark: "கோரிக்கை பெறப்பட்டு அலுவலக கோப்பு உருவாக்கப்பட்டது."
         }
@@ -1949,6 +1879,51 @@
     });
   }
 
+  function printDocketSticker(officeNo) {
+    const file = getFileSafely(officeNo);
+    if (!file) return;
+
+    const formattedDate = formatTamilDate(file.officeDate);
+    const liveScanURL = "https://satheeshhdcgobi-commits.github.io/a2deosecerd/#file=" + encodeURIComponent(file.officeNo);
+    const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=2&data=${encodeURIComponent(liveScanURL)}`;
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Sticker_${file.officeNo}</title>
+        <style>
+          @page { size: 105mm 72mm; margin: 2mm; }
+          body { font-family: 'Mukta Malar', 'Segoe UI', Arial, sans-serif; color: #000; margin: 0; padding: 4px; box-sizing: border-box; }
+          .sticker-box { border: 2px solid #000; border-radius: 6px; padding: 7px; display: flex; justify-content: space-between; align-items: flex-start; box-sizing: border-box; min-height: 64mm; }
+        </style>
+      </head>
+      <body>
+        <div class="sticker-box">
+          <div style="width: 68%;">
+            <p style="margin:0; font-size: 0.8rem; font-weight: 800; color: #0c4a6e;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை), ஈரோடு</p>
+            <p style="margin:1px 0 4px 0; font-size: 0.72rem; font-weight: bold; color: #334155;">பிரிவு : அ2 &nbsp;|&nbsp; உதவியாளர்: து.சதீஷ்குமார்</p>
+            <p style="margin:2px 0; font-size: 0.95rem; font-weight: 800;">கோப்பு எண்: ${file.officeNo}</p>
+            ${file.prevRefNo ? `<p style="margin:1px 0; font-size: 0.74rem; font-weight: bold; color: #0369a1;">முந்தைய ந.க.: ${file.prevRefNo}</p>` : ''}
+            <p style="margin:2px 0; font-size: 0.76rem;"><b>நாள்:</b> ${formattedDate} &nbsp;|&nbsp; <b>அலமாரி:</b> ${file.rackLocation || 'A2 Rack'}</p>
+            <p style="margin:2px 0; font-size: 0.75rem; font-weight: bold;">${SCHOOL_NAMES[file.schoolId] || 'Others'}</p>
+            <p style="margin:2px 0; font-size: 0.72rem;"><b>மனு:</b> ${file.category} | ${file.priority}</p>
+            <p style="margin:2px 0; font-size: 0.75rem;"><b>நிலை:</b> <span style="font-weight:bold; color:#0c4a6e; border:1px solid #0c4a6e; padding:1px 5px; border-radius:3px;">${file.status}</span></p>
+            <p style="margin:3px 0 0 0; font-size: 0.74rem; line-height:1.3; font-weight: 600;"><b>பொருள்:</b> ${file.subject}</p>
+          </div>
+          <div style="width: 30%; text-align: center; padding-top: 2px;">
+            <img src="${qrImgSrc}" width="95" height="95" style="border: 1px solid #333; padding: 2px; background: white;" alt="QR Code">
+            <p style="font-size: 0.62rem; margin: 3px 0 0 0; font-weight: 800; color:#0c4a6e;">📱 SCAN STATUS</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 300);
+  }
+
   function generateHandoverSlip() {
     const pendingFiles = memoryFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது');
     let rows = '';
@@ -2165,21 +2140,18 @@
     });
 
     const formattedDate = formatTamilDate(file.officeDate);
+    const liveScanURL = getFileScanURL(file.officeNo);
+    const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=2&data=${encodeURIComponent(liveScanURL)}`;
+
     const isClosed = file.status === 'முடிவுற்றது' || file.status === 'நிராகரிக்கப்பட்டது';
     const curLoc = isClosed ? '-' : file.currentWith;
 
     const win = window.open('', '_blank');
-    if (!win) {
-      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
-      return;
-    }
-
-    win.document.open();
     win.document.write(`
       <!DOCTYPE html>
       <html>
       <head>
-        <title>History_${file.officeNo}</title>
+        <title>History_${file.officeNo.replace(/[\/\\]/g, '_')}</title>
         <style>
           @page { size: A4 portrait; margin: 8mm; }
           body { font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin: 0; padding: 15px; position: relative; }
@@ -2191,10 +2163,14 @@
       <body>
         <div class="watermark">DEO ERODE A2 SECTION</div>
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0c4a6e; padding-bottom: 8px; margin-bottom: 12px;">
-          <div style="width: 100%;">
+          <div style="width: 78%;">
             <h2 style="margin: 0; color: #0c4a6e; font-size: 1.25rem;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை) ஈரோடு</h2>
             <p style="margin: 3px 0 0 0; font-size: 0.9rem; font-weight: bold; color: #475569;">பிரிவு: அ2 &nbsp;|&nbsp; உதவியாளர்: து.சதீஷ்குமார்</p>
             <h3 style="margin: 4px 0 0 0; font-size: 0.95rem; text-decoration: underline; color: #0f172a;">கோப்பு முழு நகர்வு வரலாற்று அறிக்கை (Movement History Report)</h3>
+          </div>
+          <div style="width: 20%; text-align: right;">
+            <img src="${qrImgSrc}" width="85" height="85" style="border: 1px solid #999; padding: 2px; background: white;" alt="QR Code">
+            <p style="font-size: 0.60rem; margin: 2px 0 0 0; color: #0c4a6e; font-weight:bold; text-align: center;">📱 SCAN LIVE STATUS</p>
           </div>
         </div>
 
@@ -2253,87 +2229,651 @@
     setTimeout(() => { win.print(); }, 300);
   }
 
-  function printDocketSticker(officeNo) {
+  function generateReceiptPDF(officeNo) {
     const file = getFileSafely(officeNo);
     if (!file) return;
 
-    const win = window.open('', '_blank');
-    if (!win) {
-      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
-      return;
-    }
+    const formattedDate = formatTamilDate(file.officeDate);
+    const liveScanURL = getFileScanURL(file.officeNo);
+    const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=2&data=${encodeURIComponent(liveScanURL)}`;
 
-    win.document.open();
+    const win = window.open('', '_blank');
     win.document.write(`
       <!DOCTYPE html>
       <html>
       <head>
-        <meta charset="UTF-8">
-        <title>Sticker_${file.officeNo}</title>
+        <title>Receipt_${file.officeNo.replace(/[\/\\]/g, '_')}</title>
         <style>
-          @page { size: 14cm 7cm; margin: 3mm; }
-          body { 
-            font-family: 'TAU-Marutham', 'Mukta Malar', 'Segoe UI', Arial, sans-serif; 
-            font-size: 11pt; 
-            color: #000; 
-            margin: 0; 
-            padding: 4px; 
-            box-sizing: border-box; 
-          }
-          .sticker-box { 
-            border: 2px solid #000; 
-            border-radius: 4px; 
-            padding: 8px; 
-            box-sizing: border-box; 
-            width: 13.4cm; 
-            height: 6.4cm; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-          }
+          @page { size: A4 portrait; margin: 10mm; }
+          body { font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin: 0; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; }
+          .digital-seal { border: 2px dashed #0c4a6e; border-radius: 50%; width: 75px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; color: #0c4a6e; text-align: center; }
         </style>
       </head>
       <body>
-        <div class="sticker-box">
-          <div style="text-align: center; font-weight: bold; font-size: 12pt; line-height: 1.2;">
-            மாவட்டக்கல்வி அலுவலகம்,<br>
-            <span style="font-size: 11pt;">(இடைநிலை) ஈரோடு.</span>
+        <div style="padding: 22px; border: 2px solid #000; max-width: 680px; margin: 0 auto; box-sizing: border-box;">
+          <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 14px;">
+            <h2 style="margin:0; font-size:1.3rem;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை) ஈரோடு</h2>
+            <p style="margin:3px 0; font-weight:bold; font-size:0.95rem;">பிரிவு : அ2 &nbsp;&nbsp;|&nbsp;&nbsp; உதவியாளர் : து.சதீஷ்குமார்</p>
+            <h3 style="margin:5px 0 0 0; text-decoration: underline; font-size:1rem;">கோரிக்கை மனு ஏற்பு ஒப்புகைச் சீட்டு (Acknowledgement)</h3>
           </div>
-          <div style="display: flex; justify-content: space-between; font-weight: bold;">
-            <span>பிரிவு : அ2</span>
-            <span>கோப்பு எண்: ${file.officeNo}</span>
+          
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 16px;">
+            <table style="width:70%; border:none;">
+              <tr>
+                <td style="border:none; padding:4px 0; width:42%; font-size:0.88rem;"><b>அலுவலக கோப்பு எண்:</b></td>
+                <td style="border:none; padding:4px 0; font-size:0.88rem;">
+                  <b>${file.officeNo}</b>
+                  ${file.prevRefNo ? `<br><small style="color:#0369a1; font-weight:bold;">முந்தைய ந.க.: ${file.prevRefNo}</small>` : ''}
+                </td>
+              </tr>
+              <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>பெறப்பட்ட தேதி:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${formattedDate}</td></tr>
+              <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>பள்ளியின் பெயர்:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>${SCHOOL_NAMES[file.schoolId] || 'Others'}</b></td></tr>
+              <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>பள்ளி பதிவேடு எண்:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${file.schoolRegNo || '-'}</td></tr>
+              <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>மனு வகை & முன்னுரிமை:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${file.category || 'Common'} | ${file.priority}</td></tr>
+              <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>கோரிக்கை விவரம்:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${file.subject}</td></tr>
+            </table>
+            <div style="text-align:center; width:28%;">
+              <img src="${qrImgSrc}" width="90" height="90" style="border: 1px solid #999; padding: 2px; background:white;" alt="QR Code">
+              <p style="font-size:0.62rem; margin:3px 0 0 0; color:#0c4a6e; font-weight:800;">📱 SCAN STATUS</p>
+            </div>
           </div>
-          <div>
-            <b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}
-          </div>
-          <div>
-            <b>கோரிக்கை:</b> ${file.category || 'Common'}
-          </div>
-          <div>
-            <b>கோரிக்கை விவரம்:</b> ${file.subject}
-          </div>
-          <div style="display: flex; justify-content: space-between; border-top: 1px dotted #000; padding-top: 3px;">
-            <span><b>பக்கம் எண்:</b> ..........</span>
-            <span><b>முடிவின் தன்மை:</b> ........................</span>
+
+          <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size:0.85rem;">
+            <span>பெறுபவர் கையொப்பம்</span>
+            <div class="digital-seal">OFFICIAL SEAL<br>DEO ERODE<br>SECTION A2</div>
+            <span>பிரிவு எழுத்தர் (அ2 பிரிவு)</span>
           </div>
         </div>
-        <script>
-          window.onload = function() {
-            window.print();
-          };
-        </script>
       </body>
       </html>
     `);
     win.document.close();
+    setTimeout(() => { win.print(); }, 300);
+  }
+
+  function generateMonthlyArrearReport() {
+    let tableRows = '';
+
+    memoryFiles.forEach((f, index) => {
+      const days = calculateDaysPending(f.officeDate);
+      const isClosed = f.status === 'முடிவுற்றது' || f.status === 'நிராகரிக்கப்பட்டது';
+      const curLoc = isClosed ? '-' : f.currentWith;
+
+      tableRows += `
+        <tr style="border-bottom: 1px solid #cbd5e1;">
+          <td style="padding: 6px; text-align: center; border: 1px solid #cbd5e1; font-size: 0.75rem;">${index + 1}</td>
+          <td style="padding: 6px; border: 1px solid #cbd5e1; font-size: 0.78rem;">
+            <b>${f.officeNo}</b><br>${formatTamilDate(f.officeDate)}
+            ${f.prevRefNo ? `<br><small style="color:#0369a1;">முந்தைய: ${f.prevRefNo}</small>` : ''}
+          </td>
+          <td style="padding: 6px; border: 1px solid #cbd5e1; font-size: 0.78rem;">${SCHOOL_NAMES[f.schoolId] || 'Others'}</td>
+          <td style="padding: 6px; border: 1px solid #cbd5e1; font-size: 0.78rem;">${f.category || 'Common'}</td>
+          <td style="padding: 6px; border: 1px solid #cbd5e1; font-size: 0.78rem;">${f.subject}</td>
+          <td style="padding: 6px; border: 1px solid #cbd5e1; font-size: 0.78rem; font-weight:bold; color:#0284c7;">${curLoc}</td>
+          <td style="padding: 6px; border: 1px solid #cbd5e1; font-size: 0.78rem; text-align:center;"><b>${isClosed ? '-' : days}</b></td>
+          <td style="padding: 6px; border: 1px solid #cbd5e1; font-size: 0.78rem; font-weight:bold;">${f.status}</td>
+        </tr>
+      `;
+    });
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Monthly_Arrear_Statement</title>
+        <style>
+          @page { size: A4 landscape; margin: 8mm; }
+          body { font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin: 0; padding: 10px; }
+          table { width: 100%; border-collapse: collapse; }
+        </style>
+      </head>
+      <body>
+        <div style="text-align: center; border-bottom: 2px solid #0c4a6e; padding-bottom: 6px; margin-bottom: 12px;">
+          <h2 style="margin:0; font-size:1.25rem;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை), ஈரோடு - பிரிவு: அ2</h2>
+          <h3 style="margin:3px 0 0 0; color:#0c4a6e;">மாதாந்திர ஒருங்கிணைந்த கோப்புகள் மற்றும் நிலுவை அறிக்கை (Consolidated Review Statement)</h3>
+          <small>அறிக்கை நாள்: ${formatTamilDate(new Date().toISOString().slice(0,10))} | உதவியாளர்: து.சதீஷ்குமார்</small>
+        </div>
+        <table>
+          <thead>
+            <tr style="background:#e2e8f0; font-size:0.75rem;">
+              <th style="padding:6px; border:1px solid #cbd5e1; width:30px;">வ.எண்</th>
+              <th style="padding:6px; border:1px solid #cbd5e1; width:120px;">அலுவலக எண் & தேதி</th>
+              <th style="padding:6px; border:1px solid #cbd5e1; width:170px;">பள்ளியின் பெயர்</th>
+              <th style="padding:6px; border:1px solid #cbd5e1; width:90px;">மனு வகை</th>
+              <th style="padding:6px; border:1px solid #cbd5e1;">கோரிக்கை விவரம்</th>
+              <th style="padding:6px; border:1px solid #cbd5e1; width:120px;">யாரிடம் உள்ளது</th>
+              <th style="padding:6px; border:1px solid #cbd5e1; width:50px;">நிலுவை</th>
+              <th style="padding:6px; border:1px solid #cbd5e1; width:90px;">நிலை</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 300);
+  }
+
+  function toggleScorecard() {
+    const sec = document.getElementById('scorecardSection');
+    sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+    if (sec.style.display === 'block') renderScorecard();
+  }
+
+  function renderScorecard() {
+    const tbody = document.getElementById('scorecardTableBody');
+    tbody.innerHTML = '';
+
+    const schools = ["SCH_1", "SCH_2", "SCH_3", "SCH_4", "SCH_5", "SCH_OTHERS"];
+
+    schools.forEach(schId => {
+      const schFiles = memoryFiles.filter(f => f.schoolId === schId);
+      const total = schFiles.length;
+      if (total === 0) return;
+
+      const completed = schFiles.filter(f => f.status === 'முடிவுற்றது').length;
+      const pending = schFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது').length;
+      const returned = schFiles.filter(f => f.status === 'Return' || f.status === 'நிராகரிக்கப்பட்டது' || f.status === 'திருப்பப்பட்டது').length;
+
+      let score = Math.round(((completed / total) * 100) - ((returned / total) * 20));
+      if (score < 0) score = 0;
+      if (score > 100) score = 100;
+
+      let grade = 'B';
+      let gradeClass = 'grade-b';
+      if (score >= 85) { grade = 'A+ (Excellent)'; gradeClass = 'grade-a-plus'; }
+      else if (score >= 70) { grade = 'A (Good)'; gradeClass = 'grade-a'; }
+      else if (score >= 50) { grade = 'B (Satisfactory)'; gradeClass = 'grade-b'; }
+      else { grade = 'C (Action Needed)'; gradeClass = 'grade-c'; }
+
+      tbody.innerHTML += `
+        <tr>
+          <td><b>${SCHOOL_NAMES[schId]}</b></td>
+          <td><b>${total}</b></td>
+          <td style="color:#16a34a; font-weight:bold;">${completed}</td>
+          <td style="color:#d97706; font-weight:bold;">${pending}</td>
+          <td style="color:#dc2626; font-weight:bold;">${returned}</td>
+          <td><b style="font-size:0.95rem;">${score}%</b></td>
+          <td><span class="grade-badge ${gradeClass}">${grade}</span></td>
+        </tr>
+      `;
+    });
+  }
+
+  function openArchiveModal() {
+    renderArchiveList();
+    document.getElementById('archiveModal').style.display = 'flex';
+  }
+  function closeArchiveModal() { document.getElementById('archiveModal').style.display = 'none'; }
+
+  function renderArchiveList() {
+    const tbody = document.getElementById('archiveTableBody');
+    tbody.innerHTML = '';
+    const list = getArchivedFiles();
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">காப்பகத்தில் கோப்புகள் எதுவும் இல்லை.</td></tr>`;
+      return;
+    }
+
+    list.forEach(f => {
+      tbody.innerHTML += `
+        <tr>
+          <td><b>${f.officeNo}</b><br><small>${formatTamilDate(f.officeDate)}</small></td>
+          <td>${SCHOOL_NAMES[f.schoolId] || 'Others'}</td>
+          <td><span class="badge-cat">${f.category || 'Common'}</span></td>
+          <td>${f.subject}</td>
+          <td><span class="badge badge-completed">${f.status}</span></td>
+          <td>
+            <button class="btn btn-sm btn-edit" onclick="restoreFromArchive('${encodeURIComponent(f.officeNo)}')">மீட்டெடு ↩</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  function archiveSingleFile(officeNo) {
+    if (!confirm(`கோப்பு எண்: ${officeNo} - ஐ காப்பகத்திற்கு (Archive) மாற்ற விரும்புகிறீர்களா?`)) return;
+    const file = getFileSafely(officeNo);
+    if (!file) return;
+
+    let archives = getArchivedFiles();
+    archives.unshift(file);
+    saveArchivedFiles(archives);
+
+    memoryFiles = memoryFiles.filter(f => String(f.officeNo).trim().toLowerCase() !== String(officeNo).trim().toLowerCase());
+    saveLocalFiles(memoryFiles);
+
+    renderDashboard();
+    updateCharts();
+    alert("கோப்பு வெற்றிகரமாகக் காப்பகத்திற்கு மாற்றப்பட்டது!");
+  }
+
+  function restoreFromArchive(officeNo) {
+    let archives = getArchivedFiles();
+    const safeNo = decodeURIComponent(officeNo);
+    const file = archives.find(f => String(f.officeNo).trim().toLowerCase() === safeNo.trim().toLowerCase());
+    if (!file) return;
+
+    archives = archives.filter(f => String(f.officeNo).trim().toLowerCase() !== safeNo.trim().toLowerCase());
+    saveArchivedFiles(archives);
+
+    memoryFiles.unshift(file);
+    saveLocalFiles(memoryFiles);
+
+    renderArchiveList();
+    renderDashboard();
+    updateCharts();
+    alert("கோப்பு வெற்றிகரமாக முதன்மைப் பட்டியலுக்கு மீட்டெடுக்கப்பட்டது!");
+  }
+
+  function exportToExcel() {
+    const isAdmin = currentUser === 'ADMIN';
+    const dataToExport = (isAdmin ? memoryFiles : memoryFiles.filter(f => f.schoolId === currentUser)).map(f => {
+      const isClosed = f.status === 'முடிவுற்றது' || f.status === 'நிராகரிக்கப்பட்டது';
+      return {
+        "அலுவலக எண்": f.officeNo,
+        "தேதி": formatTamilDate(f.officeDate),
+        "முந்தைய ந.க. எண்": f.prevRefNo || '-',
+        "பள்ளி பெயர்": SCHOOL_NAMES[f.schoolId] || 'Others',
+        "பள்ளி பதிவேடு எண்": f.schoolRegNo || '-',
+        "அலமாரி இருப்பிடம்": f.rackLocation || 'A2 Rack',
+        "மனு வகை": f.category || 'Common',
+        "முன்னுரிமை": f.priority,
+        "கோரிக்கை விவரம்": f.subject,
+        "Quick Note": f.quickNote || '',
+        "யாரிடம் நிலுவை": isClosed ? '-' : f.currentWith,
+        "நிலை": f.status,
+        "நிலுவை நாட்கள்": isClosed ? '-' : calculateDaysPending(f.officeDate)
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "அனைத்துக்_கோப்புகள்");
+    XLSX.writeFile(wb, `All_Office_Files_${new Date().toISOString().slice(0,10)}.xlsx`);
+  }
+
+  // கூடுதல் வசதி 2: ஒரே கிளிக்கில் அனைத்து நிலுவைக் கோப்புகளையும் Excel-க்கு மாற்றுதல்
+  function exportPendingToExcel() {
+    const pendingFiles = memoryFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது');
+    if (pendingFiles.length === 0) { alert("நிலுவைக் கோப்புகள் எதுவும் இல்லை!"); return; }
+
+    const dataToExport = pendingFiles.map(f => ({
+      "அலுவலக எண்": f.officeNo,
+      "தேதி": formatTamilDate(f.officeDate),
+      "பள்ளி பெயர்": SCHOOL_NAMES[f.schoolId] || 'Others',
+      "பள்ளி பதிவேடு எண்": f.schoolRegNo || '-',
+      "மனு வகை": f.category || 'Common',
+      "கோரிக்கை விவரம்": f.subject,
+      "Quick Note": f.quickNote || '',
+      "யாரிடம் நிலுவை": f.currentWith,
+      "நிலுவை நாட்கள்": calculateDaysPending(f.officeDate)
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "நிலுவைக்_கோப்புகள்");
+    XLSX.writeFile(wb, `Pending_Files_List_${new Date().toISOString().slice(0,10)}.xlsx`);
+  }
+
+  function trackSingleFile() {
+    const rawInput = document.getElementById('trackSchoolRegNo').value.trim();
+    const resultDiv = document.getElementById('trackResult');
+
+    if (!rawInput) {
+      resultDiv.innerHTML = `<p style="color:red; margin-top:10px;">உங்கள் பள்ளி பதிவேடு எண்ணை உள்ளிடவும்!</p>`;
+      return;
+    }
+
+    const cleanInput = rawInput.toLowerCase().replace(/\s+/g, '');
+
+    const file = memoryFiles.find(f => {
+      if (f.schoolId !== currentUser) return false;
+      const cleanReg = String(f.schoolRegNo || '').toLowerCase().replace(/\s+/g, '');
+      const cleanOffice = String(f.officeNo || '').toLowerCase().replace(/\s+/g, '');
+      return cleanReg.includes(cleanInput) || cleanOffice.includes(cleanInput);
+    });
+
+    if (!file) {
+      resultDiv.innerHTML = `<p style="color:red; margin-top:10px;">மன்னிக்கவும், '${rawInput}' எண் கொண்ட கோப்பு உங்கள் பள்ளியின் கணக்கில் இல்லை.</p>`;
+      return;
+    }
+
+    let badgeClass = 'badge-pending';
+    if (file.status === 'முடிவுற்றது') badgeClass = 'badge-completed';
+    if (file.status === 'நிராகரிக்கப்பட்டது') badgeClass = 'badge-rejected';
+    if (file.status === 'Return' || file.status === 'திருப்பப்பட்டது') badgeClass = 'badge-return';
+
+    const isClosed = file.status === 'முடிவுற்றது' || file.status === 'நிராகரிக்கப்பட்டது';
+    const curWithText = isClosed ? '-' : (file.currentWith || 'பிரிவு எழுத்தர்');
+
+    let downloadAttachmentBtn = '';
+    if (file.deoAttachment) {
+      downloadAttachmentBtn = `<a href="${file.deoAttachment}" target="_blank" class="btn btn-sm btn-warning" download="DEO_Order_${file.officeNo}.pdf">📥 இறுதி ஆணை பதிவிறக்கம் (Download Order)</a>`;
+    }
+
+    resultDiv.innerHTML = `
+      <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:16px; margin-top:14px;">
+        <h4 style="margin:0 0 6px 0; color:#0c4a6e;">அலுவலக கோப்பு எண்: ${file.officeNo}</h4>
+        <p style="margin:3px 0;"><b>பள்ளி பதிவேடு எண்:</b> ${file.schoolRegNo || '-'}</p>
+        ${file.prevRefNo ? `<p style="margin:2px 0; color:#0369a1; font-weight:bold;"><b>முந்தைய ந.க. எண்:</b> ${file.prevRefNo}</p>` : ''}
+        <p style="margin:3px 0;"><b>மனு வகை:</b> <span class="badge-cat">${file.category || 'Common'}</span> | <b>முன்னுரிமை:</b> ${file.priority}</p>
+        <p style="margin:3px 0;"><b>கோரிக்கை பொருள்:</b> ${file.subject}</p>
+        
+        <p style="margin:6px 0 3px 0;"><b>கோப்பு தற்போது யாரிடம் உள்ளது:</b> <span style="color:#0284c7; font-weight:bold;">${curWithText}</span></p>
+        <p style="margin:3px 0;"><b>தற்போதைய நிலை:</b> <span class="badge ${badgeClass}">${file.status}</span></p>
+        ${file.dispatchDate ? `<p style="margin:3px 0; color:#166534;"><b>தபால் அனுப்பிய தேதி:</b> ${formatTamilDate(file.dispatchDate)}</p>` : ''}
+        ${file.postTrackId ? `<p style="margin:3px 0; color:#1e40af;"><b>Post Track ID:</b> ${file.postTrackId}</p>` : ''}
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-sm btn-secondary" onclick="generateHistoryPDF('${encodeURIComponent(file.officeNo)}')">📄 வரலாறு PDF</button>
+          ${downloadAttachmentBtn}
+        </div>
+      </div>
+    `;
+  }
+
+  function checkDirectScanURL() {
+  let fileParam = null;
+  const hash = window.location.hash;
+  if (hash && hash.includes('#file=')) {
+    fileParam = hash.replace('#file=', '');
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    fileParam = urlParams.get('file');
+  }
+    if (fileParam) {
+      let allFiles = getLocalFiles();
+      if (!allFiles || allFiles.length === 0) allFiles = memoryFiles;
+
+      const targetNo = decodeURIComponent(fileParam).trim().toLowerCase();
+      const file = allFiles.find(f => String(f.officeNo).trim().toLowerCase() === targetNo);
+
+      if (file) {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'none';
+        
+        let card = document.getElementById('directScanViewCard');
+        if (!card) {
+          card = document.createElement('div');
+          card.id = 'directScanViewCard';
+          card.className = 'card';
+          card.style.cssText = "border: 3px solid #0284c7; background: #f0f9ff; max-width: 800px; margin: 30px auto;";
+          document.querySelector('.container').prepend(card);
+        }
+        card.style.display = 'block';
+
+        let histList = file.history || [];
+        if (typeof histList === 'string') {
+          try { histList = JSON.parse(histList); } catch(e) { histList = []; }
+        }
+
+        let histHTML = '';
+        histList.forEach((h, idx) => {
+          histHTML += `<tr><td style="padding:6px; border:1px solid #cbd5e1;">${idx+1}</td><td style="padding:6px; border:1px solid #cbd5e1;">${h.date||'-'}</td><td style="padding:6px; border:1px solid #cbd5e1; font-weight:bold; color:#0c4a6e;">${h.stage||'-'}</td><td style="padding:6px; border:1px solid #cbd5e1;">${h.remark||'-'}</td></tr>`;
+        });
+
+        const isClosed = file.status === 'முடிவுற்றது' || file.status === 'நிராகரிக்கப்பட்டது';
+
+        let downloadAttachmentBtn = '';
+        if (file.deoAttachment) {
+          downloadAttachmentBtn = `<a href="${file.deoAttachment}" target="_blank" class="btn btn-sm btn-warning" download="DEO_Order_${file.officeNo}.pdf">📥 இறுதி ஆணை பதிவிறக்கம் (Download Order)</a>`;
+        }
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #bae6fd; padding-bottom:8px; margin-bottom:12px;">
+            <h3 style="margin:0; color:#0369a1;">📱 உயர் அலுவலர் கோப்பு நேரடி ஆய்வு அட்டை (Live Officer Inspection)</h3>
+            <button class="btn btn-sm btn-danger" onclick="closeDirectScanView()">முகப்பு செல் ✕</button>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px; font-size:0.90rem; margin-bottom:12px;">
+            <div><b>அலுவலக கோப்பு எண்:</b> <span style="color:#0c4a6e; font-weight:bold; font-size:1.05rem;">${file.officeNo}</span></div>
+            <div><b>நாள்:</b> ${formatTamilDate(file.officeDate)}</div>
+            ${file.prevRefNo ? `<div><b>முந்தைய ந.க.:</b> ${file.prevRefNo}</div>` : ''}
+            <div><b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}</div>
+            <div><b>பள்ளி பதிவேடு எண்:</b> ${file.schoolRegNo || '-'}</div>
+            <div><b>மனு வகை:</b> <span class="badge-cat">${file.category || 'Common'}</span></div>
+            <div><b>அலமாரி (Rack):</b> ${file.rackLocation || 'A2 Rack'}</div>
+            <div><b>தற்போது உள்ள இடம்:</b> <b style="color:#0284c7;">${isClosed ? '-' : (file.currentWith || 'பிரிவு எழுத்தர்')}</b></div>
+            <div><b>தற்போதைய நிலை:</b> <span class="badge ${file.status === 'முடிவுற்றது' ? 'badge-completed' : (file.status === 'Return' ? 'badge-return' : 'badge-pending')}">${file.status}</span></div>
+            ${file.dispatchDate ? `<div><b>தபால் அனுப்பிய தேதி:</b> ${formatTamilDate(file.dispatchDate)}</div>` : ''}
+            ${file.postTrackId ? `<div><b>Post Track ID:</b> ${file.postTrackId}</div>` : ''}
+          </div>
+          <p style="margin:8px 0; font-size:0.95rem; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;"><b>கோரிக்கை விவரம் & பொருள்:</b> ${file.subject}</p>
+          <div style="margin:12px 0;">${downloadAttachmentBtn}</div>
+          <h4 style="margin:14px 0 6px 0; color:#0c4a6e;">📋 தணிக்கை & நகர்வு வரிசை (Movement History):</h4>
+          <table style="width:100%; border-collapse:collapse; font-size:0.84rem;">
+            <thead><tr style="background:#e2e8f0;"><th style="border:1px solid #cbd5e1; padding:6px;">வ.எண்</th><th style="border:1px solid #cbd5e1; padding:6px;">தேதி & நேரம்</th><th style="border:1px solid #cbd5e1; padding:6px;">நிலை</th><th style="border:1px solid #cbd5e1; padding:6px;">குறிப்பு</th></tr></thead>
+            <tbody>${histHTML || '<tr><td colspan="4" style="text-align:center; padding:10px;">தகவல் இல்லை</td></tr>'}</tbody>
+          </table>
+        `;
+      }
+    }
+  }
+
+  function closeDirectScanView() {
+    window.location.href = window.location.href.split('?')[0];
+  }
+
+  function toggleCharts() {
+    const chartSec = document.getElementById('chartsSection');
+    chartSec.style.display = chartSec.style.display === 'none' ? 'block' : 'none';
+    if(chartSec.style.display === 'block') updateCharts();
+  }
+
+  function updateCharts() {
+    const accessibleFiles = currentUser === 'ADMIN' ? memoryFiles : memoryFiles.filter(f => f.schoolId === currentUser);
+
+    const pendingCount = accessibleFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது').length;
+    const completedCount = accessibleFiles.filter(f => f.status === 'முடிவுற்றது' || f.status === 'நிராகரிக்கப்பட்டது').length;
+
+    // கூடுதல் வசதி 6: தினசரி கோப்புப் பரிமாற்ற சுருக்கம் கணக்கிடுதல்
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayCreated = accessibleFiles.filter(f => f.officeDate === todayStr).length;
+    const todayCompleted = accessibleFiles.filter(f => f.status === 'முடிவுற்றது' && f.history && String(f.history).includes(formatTamilDate(todayStr))).length;
+    document.getElementById('dailySummaryText').innerText = `இன்று புதியதாகப் பெறப்பட்டவை: ${todayCreated} கோப்புகள் | இன்று தீர்வு செய்யப்பட்டவை: ${todayCompleted} கோப்புகள் | தற்போது மொத்த நிலுவை: ${pendingCount} கோப்புகள்.`;
+
+    const ctxStatus = document.getElementById('statusChart').getContext('2d');
+    if(statusChartInstance) statusChartInstance.destroy();
+    statusChartInstance = new Chart(ctxStatus, {
+      type: 'doughnut',
+      data: {
+        labels: ['நிலுவை (Pending)', 'முடிவுற்றது / நிராகரிப்பு'],
+        datasets: [{
+          data: [pendingCount, completedCount],
+          backgroundColor: ['#f59e0b', '#10b981']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    const categories = ["ML", "EL", "Surrender", "TPF Part Final", "Retirement Benefits", "Promotion", "Direct Appointment", "Relieving", "Salary", "Court Case", "Meeting Agenda", "Common"];
+    const catCounts = categories.map(cat => accessibleFiles.filter(f => f.category === cat).length);
+
+    const ctxCat = document.getElementById('categoryChart').getContext('2d');
+    if(categoryChartInstance) categoryChartInstance.destroy();
+    categoryChartInstance = new Chart(ctxCat, {
+      type: 'bar',
+      data: {
+        labels: categories,
+        datasets: [{
+          label: 'மனுக்களின் எண்ணிக்கை',
+          data: catCounts,
+          backgroundColor: '#0284c7'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+  }
+
+  function openContactsModal() {
+    loadContactDetails(document.getElementById('contactTargetSchool').value);
+    document.getElementById('contactsModal').style.display = 'flex';
+  }
+  function closeContactsModal() { document.getElementById('contactsModal').style.display = 'none'; }
+  function loadContactDetails(schoolKey) {
+    const contacts = getContacts();
+    const sc = contacts[schoolKey] || { jaPhone: "", hmPhone: "" };
+    document.getElementById('contactJaWhatsappInput').value = sc.jaPhone || "";
+    document.getElementById('contactHmWhatsappInput').value = sc.hmPhone || "";
+  }
+  function saveContactDetails() {
+    const targetSchool = document.getElementById('contactTargetSchool').value;
+    const jaPhone = document.getElementById('contactJaWhatsappInput').value.trim();
+    const hmPhone = document.getElementById('contactHmWhatsappInput').value.trim();
+    const contacts = getContacts();
+    contacts[targetSchool] = { jaPhone, hmPhone };
+    localStorage.setItem('system_contacts_v15', JSON.stringify(contacts));
+    alert("பள்ளி JA மற்றும் HM எண்கள் வெற்றிகரமாக சேமிக்கப்பட்டது!");
+    closeContactsModal();
+  }
+
+  function openPwdModal() { document.getElementById('pwdModal').style.display = 'flex'; }
+  function closePwdModal() { document.getElementById('pwdModal').style.display = 'none'; }
+  function saveNewPassword() {
+    const targetUser = document.getElementById('pwdTargetUser').value;
+    const newPwd = document.getElementById('newPwdInput').value.trim();
+    if (!newPwd) { alert("கடவுச்சொல்லை உள்ளிடவும்!"); return; }
+    const passwords = getPasswords();
+    passwords[targetUser] = newPwd;
+    localStorage.setItem('system_passwords_v15', JSON.stringify(passwords));
+    alert("கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது!");
+    document.getElementById('newPwdInput').value = '';
+    closePwdModal();
   }
 
   window.onload = function() {
     displayDailyKural();
     renderNoticeBoard();
     memoryFiles = getLocalFiles();
+      const urlParams = new URLSearchParams(window.location.search);
+  const fileParam = urlParams.get('file');
+  if (fileParam) {
+    setTimeout(() => {
+      let allFiles = getLocalFiles();
+      if (!allFiles || allFiles.length === 0) allFiles = memoryFiles;
+      const targetNo = fileParam.trim().toLowerCase();
+      const file = allFiles.find(f => String(f.officeNo).trim().toLowerCase() === targetNo);
+      if (file) {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'none';
+        let card = document.getElementById('directScanViewCard');
+        if (!card) {
+          card = document.createElement('div');
+          card.id = 'directScanViewCard';
+          card.className = 'card';
+          card.style.cssText = "border: 3px solid #0284c7; background: #f0f9ff; max-width: 800px; margin: 30px auto; padding: 20px;";
+          document.querySelector('.container').prepend(card);
+        }
+        card.style.display = 'block';
+        let histList = file.history || [];
+        if (typeof histList === 'string') {
+          try { histList = JSON.parse(histList); } catch(e) { histList = []; }
+        }
+        let histHTML = '';
+        histList.forEach((h, idx) => {
+          histHTML += `<tr><td style="padding:6px; border:1px solid #cbd5e1;">${idx+1}</td><td style="padding:6px; border:1px solid #cbd5e1;">${h.date||'-'}</td><td style="padding:6px; border:1px solid #cbd5e1; font-weight:bold; color:#0c4a6e;">${h.stage||'-'}</td><td style="padding:6px; border:1px solid #cbd5e1;">${h.remark||'-'}</td></tr>`;
+        });
+        const isClosed = file.status === 'முடிவுற்றது' || file.status === 'நிராகரிக்கப்பட்டது';
+        let downloadAttachmentBtn = file.deoAttachment ? `<a href="${file.deoAttachment}" target="_blank" class="btn btn-sm btn-warning" download="DEO_Order_${file.officeNo}.pdf">📥 இறுதி ஆணை பதிவிறக்கம் (Download Order)</a>` : '';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #bae6fd; padding-bottom:8px; margin-bottom:12px;">
+            <h3 style="margin:0; color:#0369a1;">📱 உயர் அலுவலர் கோப்பு நேரடி ஆய்வு அட்டை (Live Officer Inspection)</h3>
+            <button class="btn btn-sm btn-danger" onclick="location.href='index.html'">முகப்பு செல் ✕</button>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px; font-size:0.90rem; margin-bottom:12px;">
+            <div><b>அலுவலக கோப்பு எண்:</b> <span style="color:#0c4a6e; font-weight:bold; font-size:1.05rem;">${file.officeNo}</span></div>
+            <div><b>நாள்:</b> ${formatTamilDate(file.officeDate)}</div>
+            ${file.prevRefNo ? `<div><b>முந்தைய ந.க.:</b> ${file.prevRefNo}</div>` : ''}
+            <div><b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}</div>
+            <div><b>பள்ளி பதிவேடு எண்:</b> ${file.schoolRegNo || '-'}</div>
+            <div><b>மனு வகை:</b> <span class="badge-cat">${file.category || 'Common'}</span></div>
+            <div><b>அலமாரி (Rack):</b> ${file.rackLocation || 'A2 Rack'}</div>
+            <div><b>தற்போது உள்ள இடம்:</b> <b style="color:#0284c7;">${isClosed ? '-' : (file.currentWith || 'பிரிவு எழுத்தர்')}</b></div>
+            <div><b>தற்போதைய நிலை:</b> <span class="badge ${file.status === 'முடிவுற்றது' ? 'badge-completed' : (file.status === 'Return' ? 'badge-return' : 'badge-pending')}">${file.status}</span></div>
+            ${file.dispatchDate ? `<div><b>தபால் அனுப்பிய தேதி:</b> ${formatTamilDate(file.dispatchDate)}</div>` : ''}
+            ${file.postTrackId ? `<div><b>Post Track ID:</b> ${file.postTrackId}</div>` : ''}
+          </div>
+          <p style="margin:8px 0; font-size:0.95rem; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;"><b>கோரிக்கை விவரம் & பொருள்:</b> ${file.subject}</p>
+          <div style="margin:12px 0;">${downloadAttachmentBtn}</div>
+          <h4 style="margin:14px 0 6px 0; color:#0c4a6e;">📋 தணிக்கை & நகர்வு வரிசை (Movement History):</h4>
+          <table style="width:100%; border-collapse:collapse; font-size:0.84rem;">
+            <thead><tr style="background:#e2e8f0;"><th style="border:1px solid #cbd5e1; padding:6px;">வ.எண்</th><th style="border:1px solid #cbd5e1; padding:6px;">தேதி & நேரம்</th><th style="border:1px solid #cbd5e1; padding:6px;">நிலை</th><th style="border:1px solid #cbd5e1; padding:6px;">குறிப்பு</th></tr></thead>
+            <tbody>${histHTML || '<tr><td colspan="4" style="text-align:center; padding:10px;">தகவல் இல்லை</td></tr>'}</tbody>
+          </table>
+        `;
+      }
+    }, 300);
+  }
+
   };
 </script>
+<script>
+// அட்மின் பேனலில் உள்ள ஸ்கூல் செலக்ட் பாக்ஸில் பள்ளிகளின் பெயர்களை நிரப்புதல்
+function populateAdminSchoolDropdown() {
+  const selectEl = document.getElementById('adminCircularSchoolSelect');
+  if (!selectEl) return;
+  
+  selectEl.innerHTML = '<option value="">-- பள்ளியைத் தேர்ந்தெடுக்கவும் --</option>';
+  
+  if (typeof SCHOOL_NAMES !== 'undefined') {
+    for (let id in SCHOOL_NAMES) {
+      let opt = document.createElement('option');
+      opt.value = id;
+      opt.innerText = SCHOOL_NAMES[id];
+      selectEl.appendChild(opt);
+    }
+  }
+}
 
+// அட்மின் குறிப்பிட்ட பள்ளிக்கு சுற்றறிக்கையைச் சேமித்தல்
+function saveAdminSchoolCircular() {
+  const schoolId = document.getElementById('adminCircularSchoolSelect').value;
+  const msg = document.getElementById('adminCircularMsgInput').value;
+
+  if (!schoolId) {
+    alert('தயவுசெய்து உரிய பள்ளியைத் தேர்ந்தெடுக்கவும்!');
+    return;
+  }
+  if (!msg.trim()) {
+    alert('சுற்றறிக்கை செய்தியை உள்ளிடவும்!');
+    return;
+  }
+
+  localStorage.setItem('school_circular_' + schoolId, msg);
+  alert('சுற்றறிக்கை வெற்றிகரமாகச் சேமிக்கப்பட்டது!');
+  document.getElementById('adminCircularMsgInput').value = '';
+}
+
+// லாகின் செய்துள்ள பள்ளிக்குரிய சுற்றறிக்கையை ஸ்டிக்கி நோட்டில் காட்டுவது
+function loadSchoolStickyCircular() {
+  const stickyEl = document.getElementById('schoolStickyNoticeContent');
+  if (!stickyEl) return;
+
+  if (typeof currentUser !== 'undefined' && currentUser && currentUser.schoolId) {
+    const customMsg = localStorage.getItem('school_circular_' + currentUser.schoolId);
+    if (customMsg) {
+      stickyEl.innerText = customMsg;
+    } else {
+      stickyEl.innerText = "உங்களுக்கு புதிய சுற்றறிக்கைகள் எதுவும் இல்லை.";
+    }
+  } else {
+    stickyEl.innerText = "பள்ளிகள் லாகின் செய்தவுடன் அவர்களுக்கான சுற்றறிக்கை இங்கே தெரியும்.";
+  }
+}
+
+// பக்கம் லோட் ஆகும்போது இவை இயங்க வேண்டும்
+window.addEventListener('DOMContentLoaded', () => {
+  populateAdminSchoolDropdown();
+  loadSchoolStickyCircular();
+});
+</script>
 </body>
 </html>
+
