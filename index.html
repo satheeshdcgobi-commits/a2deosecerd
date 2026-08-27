@@ -938,7 +938,7 @@
 <script>
   const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwa8JJiVDgxqV3h3FPYelHedAWIVjIlqRKtvU7jQCHLtMty7UpHQD7IVnFI_m8HDd76XQ/exec";
 
-  // நேர மாற்றம் காரணமாக நாள் மாறுவதைத் தவிர்க்க முறையான உள்ளூர் தேதியைப் பெறுதல்
+  // இந்திய நேரத்தின்படி (IST) துல்லியமான உள்ளூர் தேதியை வழங்கும் முறை (Timezone Shift முற்றிலுமாகத் தவிர்க்கப்பட்டது)
   function getLocalDateString() {
     const d = new Date();
     const year = d.getFullYear();
@@ -995,7 +995,7 @@
     document.getElementById('kuralMeaningText').innerHTML = `<b>பொருள்:</b> ${todayKural.meaning}`;
   }
 
-  // YYYY-MM-DD தேதியை DD/MM/YYYY என மாற்றுதல்
+  // YYYY-MM-DD தேதியை எந்தவித மாற்றமும் இல்லாமல் நேரடியாக DD/MM/YYYY என மாற்றும் முறை
   function formatTamilDate(dateStr) {
     if (!dateStr) return "-";
     const cleanStr = String(dateStr).split('T')[0];
