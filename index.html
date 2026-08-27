@@ -228,17 +228,23 @@
     .grade-b { background: #fef3c7; color: #b45309; border: 1px solid #fde047; }
     .grade-c { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
-    /* Sticky Note Style for School Panel */
+    /* Sticky Note Style for School Circular */
     .sticky-pin-card {
       background: #fef08a;
       color: #713f12;
-      padding: 18px 22px;
+      padding: 15px 20px;
       border-radius: 4px;
-      box-shadow: 3px 4px 12px rgba(0,0,0,0.15);
+      width: 260px;
+      box-shadow: 3px 4px 10px rgba(0,0,0,0.15);
       position: relative;
       font-family: 'Comic Sans MS', cursive, sans-serif, Arial;
       transform: rotate(1deg);
       border-top: 5px solid #facc15;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-sizing: border-box;
+      flex-shrink: 0;
     }
     .sticky-pin-card::before {
       content: "📌";
@@ -248,6 +254,10 @@
       transform: translateX(-50%);
       font-size: 1.3rem;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    .sticky-pin-card:hover {
+      transform: rotate(0deg) scale(1.02);
+      transition: transform 0.2s ease;
     }
 
     .modal {
@@ -308,14 +318,34 @@
     <div id="directScanDetails"></div>
   </div>
 
-  <!-- முகப்புப் பக்க அறிவிப்புப் பலகை (எடிட் பட்டன் மற்றும் ஸ்டிக்கி நோட் இல்லாத தூய்மையான பகுதி) -->
+  <!-- புதிய அறிவிப்புப் பலகை மற்றும் பள்ளி சுற்றறிக்கை ஸ்டிக்கி நோட் பகுதி -->
   <div style="margin: 10px 0;">
-    <div style="background: #fff; border-left: 4px solid #0284c7; padding: 14px 18px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
-        <span style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">📌 புதிய அறிவிப்பு</span>
-        <span id="noticeDateTag" style="background: #bfdbfe; color: #1e3a8a; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">தேதி: 27/08/2026</span>
+    <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 15px; flex-wrap: wrap;">
+      
+      <!-- இடதுபுறம் முக்கிய அறிவிப்புப் பலகை (அட்மினுக்கு மட்டும் எடிட் பட்டன் தெரியும்) -->
+      <div style="flex: 1; min-width: 280px; background: #fff; border-left: 4px solid #0284c7; padding: 14px 18px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
+            <span style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">📌 புதிய அறிவிப்பு</span>
+            <span id="noticeDateTag" style="background: #bfdbfe; color: #1e3a8a; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">தேதி: --/--/----</span>
+          </div>
+          <p id="noticeContentText" style="margin: 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5; font-weight: 500;">மாவட்ட கல்வி அலுவலக அறிவிப்புப் பலகைச் செய்திகள் இங்கே தோன்றும்...</p>
+        </div>
+        
+        <!-- அட்மின் மட்டும் அறிவிப்பை மாற்றும் பகுதி -->
+        <div id="adminNoticeAction" style="display: none; margin-top: 10px;">
+          <button class="btn btn-notice btn-sm" onclick="openNoticeModal()">✏️ புதிய அறிவிப்பு</button>
+        </div>
       </div>
-      <p id="noticeContentText" style="margin: 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5; font-weight: 500;">மாவட்ட கல்வி அலுவலக அறிவிப்புப் பலகைச் செய்திகள் இங்கே தோன்றும்...</p>
+
+      <!-- வலதுபுறம் பள்ளி லாகின் செய்யும்போது மட்டும் தெரியும் 'Pinned Sticky Notes' (School Circular) பகுதி -->
+      <div id="schoolStickyNoteSection" class="sticky-pin-card" style="display: none;">
+        <div style="font-size: 0.75rem; font-weight: bold; color: #b45309; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">🏫 உங்கள் பள்ளிக்கான சுற்றறிக்கை:</div>
+        <div id="schoolStickyNoticeContent" style="font-size: 0.90rem; line-height: 1.4;">
+          உங்களுக்கு புதிய சுற்றறிக்கைகள் எதுவும் இல்லை.
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -379,14 +409,6 @@
       </div>
     </div>
 
-    <!-- பள்ளி லாகின் செய்யும்போது மட்டும் தெரியும் 'Pinned Sticky Notes' பகுதி -->
-    <div id="schoolStickyNoteSection" class="card sticky-pin-card" style="display: none; margin-bottom: 20px;">
-      <div style="font-size: 0.75rem; font-weight: bold; color: #b45309; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">🏫 உங்கள் பள்ளிக்கான சுற்றறிக்கை (Circular):</div>
-      <div id="schoolStickyNoticeContent" style="font-size: 0.95rem; line-height: 1.4;">
-        உங்களுக்கு புதிய சுற்றறிக்கைகள் எதுவும் இல்லை.
-      </div>
-    </div>
-
     <!-- அட்மின் கட்டுப்பாட்டுப் பலகம் மற்றும் 'School Circular' பகுதி (அட்மின் லாகின் செய்தால் மட்டுமே காட்டும்) -->
     <div id="adminSchoolCircularPanel" class="card" style="display: none; background: #f8fafc; border: 1px solid #cbd5e1;">
       <h3 style="margin-top: 0; color: var(--gov-dark); font-size: 1.1rem;">அட்மின் கட்டுப்பாட்டுப் பலகம் (Admin Panel)</h3>
@@ -418,7 +440,7 @@
         <h3 style="margin:0; color:#0369a1;">📊 பள்ளி வாரியான செயல்பாட்டு மதிப்பீட்டு அட்டை (School Compliance & Performance Scorecard)</h3>
         <button class="btn btn-sm btn-secondary" onclick="toggleScorecard()">மூடு ✕</button>
       </div>
-      <p style="margin:0 0 12px 0; font-size:0.84rem; color:#475569;">பள்ளிகள் அனுப்பிய மொத்தக் கோப்புகள், தீர்வு செய்யப்பட்ட விகிதம் மற்றும் Return சதவீத அடிப்படையில் கணக்கிடப்பட்ட தரம்:</p>
+      <p style="margin:0 0 12px 0; font-size:0.84rem; color:#475569;">பள்ளிகள் அனுப்பிய மொத்தக் கோப்புகள், தீர்வு செய்யப்பட்ட விகிதம் மற்றும் Return சதவீத அடிப்படையில் கணக்கிட்டப்பட்ட தரம்:</p>
       <div style="overflow-x:auto;">
         <table>
           <thead>
@@ -845,6 +867,25 @@
   </div>
 </div>
 
+<!-- அறிவிப்புப் பலகை பாப்-அப் -->
+<div id="noticeModal" class="modal">
+  <div class="modal-content">
+    <h3>📢 பொது அறிவிப்புப் பலகை மேலாண்மை</h3>
+    <div class="form-group">
+      <label>அறிவிப்பு நாள்:</label>
+      <input type="date" id="noticeInputDate">
+    </div>
+    <div class="form-group">
+      <label>அறிவிப்பு / சுற்றறிக்கை விவரம்:</label>
+      <textarea id="noticeInputContent" rows="4" placeholder="அனைத்துப் பள்ளிகளுக்கும் தெரிவிக்க வேண்டிய தகவல்களை உள்ளிடவும்..."></textarea>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:15px;">
+      <button onclick="saveNoticeBoardData()" id="publishNoticeBtn" class="btn btn-notice" style="flex:1;">கிளவுடில் வெளியிடு (Publish)</button>
+      <button onclick="closeNoticeModal()" class="btn btn-danger" style="flex:1;">மூடு</button>
+    </div>
+  </div>
+</div>
+
 <!-- பள்ளி தொடர்புகள் பாப்-அப் -->
 <div id="contactsModal" class="modal">
   <div class="modal-content">
@@ -911,8 +952,8 @@
   };
 
   const THIRUKKURAL_LIST = [
-    { no: 391, athikaram: "கல்வி", kural: "கற்க கசடறக் கற்பவை கற்றபின்\nநிற்க அதற்குத் தக.", meaning: "கற்கத் தகுந்த நூல்களைக் குற்றமறக் கற்க வேண்டும்; அவ்வாறு கற்ற பிறகு, கற்ற கல்விക്ക് ஏற்றவாறு நேர்மையான வழியில் நடக்க வேண்டும்." },
-    { no: 392, athikaram: "கல்வி", kural: "எண்ணென்ப ஏனை எழுத்தென்ப இவ்விரண்டும்\nகண்ணென்ப வாழும் உயிரﻖ.", meaning: "எண் என்று சொல்லப்படுபவையும், சொல் என்று சொல்லப்படும் எழுத்துக்களும் ஆகிய இவ்விரண்டையும் வாழும் மக்களுக்குக் கண்கள் என்று அறிஞர் கூறுவர்." },
+    { no: 391, athikaram: "கல்வி", kural: "கற்க கசடறக் கற்பவை கற்றபின்\nநிற்க அதற்குத் தக.", meaning: "கற்கத் தகுந்த நூல்களைக் குற்றமறக் கற்க வேண்டும்; அவ்வாறு கற்ற பிறகு, கற்ற கல்விக்கு ஏற்றவாறு நேர்மையான வழியில் நடக்க வேண்டும்." },
+    { no: 392, athikaram: "கல்வி", kural: "எண்ணென்ப ஏனை எழுத்தென்ப இவ்விரண்டும்\nகண்ணென்ப வாழும் உயிர்க்கு.", meaning: "எண் என்று சொல்லப்படுபவையும், சொல் என்று சொல்லப்படும் எழுத்துக்களும் ஆகிய இவ்விரண்டையும் வாழும் மக்களுக்குக் கண்கள் என்று அறிஞர் கூறுவர்." },
     { no: 396, athikaram: "கல்வி", kural: "தொட்டனைத் தூறும் மணற்கேணி மாந்தர்க்குக்\nகற்றனைத் தூறும் அறிவு.", meaning: "மணற்கேணியில் தோண்டிய அளவிற்கு நீர் ஊறும்; அதுபோலவே மக்கள் கற்கும் அளவிற்கு ஏற்ப அறிவு பெருகும்." },
     { no: 131, athikaram: "ஒழுக்கமுடைமை", kural: "ஒழுக்கம் விழுப்பம் தரலான் ஒழுக்கம்\nஉயிரினும் ஓம்பப் படும்.", meaning: "ஒழுக்கமே அனைவருக்கும் மேன்மையைத் தரும்; அதனால் அந்த ஒழுக்கத்தை உயிரை விடச் சிறந்ததாகக் கருதிப் பாதுகாக்க வேண்டும்." },
     { no: 102, athikaram: "செய்ந்நன்றி அறிதல்", kural: "காலத்தினாற் செய்த நன்றி சிறிதெனினும்\nஞாலத்தின் மாணப் பெரிது.", meaning: "ஒருவருக்கு நெருக்கடியான காலத்தில் செய்த உதவி அளவால் சிறியதாக இருந்தாலும், அதன் பயனை ஆராய்ந்தால் உலகத்தை விட மிகப் பெரியதாகும்." },
@@ -920,7 +961,7 @@
     { no: 666, athikaram: "வினைத்திட்பம்", kural: "எண்ணிய எண்ணியாங்கு எய்துப எண்ணியார்\nதிண்ணியர் ஆகப் பெறின்.", meaning: "செயலைத் தொடங்கியவர் மனவுறுதி உடையவராக இருந்தால், அவர் எண்ணிய செயல்களை எண்ணியவாறே நிறைவேற்றி வெற்றி பெறுவர்." },
     { no: 204, athikaram: "தீவினையச்சம்", kural: "மறந்தும் பிறன்கேடு சூழற்க சூழின்\nஅறஞ்சூழும் சூழ்ந்தவன் கேடு.", meaning: "மறந்தும் கூடப் பிறருக்குக் கெடுதல் செய்ய நினைக்கக் கூடாது; அவ்வாறு நினைத்தால், நினைத்தவனுக்குக் கேடு உண்டாகுமாறு அறக்கடவுள் நினைக்கும்." },
     { no: 111, athikaram: "நடுவுநிலைமை", kural: "தகுதி எனவொன்று நன்றே பகுதியால்\nபாற்பட்டு ஒழுகப் பெறின்.", meaning: "பகைவர், அயலார், நண்பர் என்ற பாகுபாடு இல்லாமல் எல்லாரிடத்தும் நடுவுநிலைமை தவறாமல் நடப்பதே சிறந்த தகுதியாகும்." },
-    { no: 484, athikaram: "காலமறிதல்", kural: "ஞாலம் கருதિનுங் கைகூடும் காலம்\nகருதி இடத்தாற் செயின்.", meaning: "தக்க காலத்தை அறிந்து, பொருத்தமான இடத்தைத் தேர்ந்தெடுத்து ஒரு செயலைச் செய்தால் உலகத்தையே வெல்ல நினைத்தாலும் கைகூடும்." }
+    { no: 484, athikaram: "காலமறிதல்", kural: "ஞாலம் கருதினுங் கைகூடும் காலம்\nகருதி இடத்தாற் செயின்.", meaning: "தக்க காலத்தை அறிந்து, பொருத்தமான இடத்தைத் தேர்ந்தெடுத்து ஒரு செயலைச் செய்தால் உலகத்தையே வெல்ல நினைத்தாலும் கைகூடும்." }
   ];
 
   function playAlertSound() {
@@ -970,6 +1011,41 @@
     const notice = noticeData || getNoticeBoardData();
     document.getElementById('noticeDateTag').innerText = `தேதி: ${formatTamilDate(notice.date)}`;
     document.getElementById('noticeContentText').innerText = notice.content;
+  }
+
+  function openNoticeModal() {
+    const notice = getNoticeBoardData();
+    document.getElementById('noticeInputDate').value = notice.date || new Date().toISOString().slice(0, 10);
+    document.getElementById('noticeInputContent').value = notice.content || '';
+    document.getElementById('noticeModal').style.display = 'flex';
+  }
+
+  function closeNoticeModal() { document.getElementById('noticeModal').style.display = 'none'; }
+
+  async function saveNoticeBoardData() {
+    const date = document.getElementById('noticeInputDate').value;
+    const content = document.getElementById('noticeInputContent').value.trim();
+    if (!content) { alert("அறிவிப்பு விவரங்களை உள்ளிடவும்!"); return; }
+    const notice = { date: date || new Date().toISOString().slice(0, 10), content };
+    localStorage.setItem('system_notice_v3', JSON.stringify(notice));
+    renderNoticeBoard(notice);
+    
+    document.getElementById('publishNoticeBtn').innerText = "வெளியிடப்படுகிறது...";
+
+    if (GOOGLE_SHEET_API_URL && GOOGLE_SHEET_API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+      try {
+        await fetch(GOOGLE_SHEET_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "save_notice", data: notice })
+        });
+      } catch (err) {}
+    }
+
+    document.getElementById('publishNoticeBtn').innerText = "கிளவுடில் வெளியிடு (Publish)";
+    closeNoticeModal();
+    alert("அறிவிப்புப் பலகை வெற்றிகரமாக அனைத்துப் பள்ளிகளுக்கும் வெளியிடப்பட்டது!");
   }
 
   const SCHOOL_NAMES = {
@@ -1055,6 +1131,8 @@
     document.getElementById('dashboardSection').style.display = 'none';
     document.getElementById('headerUserActions').style.display = 'none';
     document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('adminNoticeAction').style.display = 'none';
+    document.getElementById('schoolStickyNoteSection').style.display = 'none';
   }
 
   function setupDashboard() {
@@ -1072,6 +1150,9 @@
     document.getElementById('exportPendingBtn').style.display = isAdmin ? 'inline-block' : 'none';
     document.getElementById('adminEntryContainer').style.display = isAdmin ? 'block' : 'none';
     document.getElementById('schoolSearchContainer').style.display = isAdmin ? 'none' : 'block';
+    
+    // அட்மினுக்கு அறிவிப்பை எடிட் செய்யும் பட்டன் மட்டும் தெரியும்
+    document.getElementById('adminNoticeAction').style.display = isAdmin ? 'block' : 'none';
     
     // அட்மின் பேனல் அல்லது பள்ளி ஸ்டிக்கி நோட் கட்டுப்பாடு
     document.getElementById('adminSchoolCircularPanel').style.display = isAdmin ? 'block' : 'none';
@@ -2698,5 +2779,6 @@
     }
   };
 </script>
+
 </body>
 </html>
