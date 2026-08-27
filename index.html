@@ -1826,7 +1826,7 @@
     if (!file) return;
 
     const formattedDate = formatTamilDate(file.officeDate);
-    const liveScanURL = "https://satheeshhdcgobi-commits.github.io/a2deosecerd/?file=" + encodeURIComponent(file.officeNo);
+    const liveScanURL = "https://satheeshhdcgobi-commits.github.io/a2deosecerd/#file=" + encodeURIComponent(file.officeNo);
     const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=2&data=${encodeURIComponent(liveScanURL)}`;
 
     const win = window.open('', '_blank');
@@ -2519,8 +2519,14 @@
   }
 
   function checkDirectScanURL() {
+  let fileParam = null;
+  const hash = window.location.hash;
+  if (hash && hash.includes('#file=')) {
+    fileParam = hash.replace('#file=', '');
+  } else {
     const urlParams = new URLSearchParams(window.location.search);
-    const fileParam = urlParams.get('file');
+    fileParam = urlParams.get('file');
+  }
     if (fileParam) {
       let allFiles = getLocalFiles();
       if (!allFiles || allFiles.length === 0) allFiles = memoryFiles;
