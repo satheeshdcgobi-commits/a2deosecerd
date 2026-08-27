@@ -937,6 +937,7 @@
 <script>
   const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwa8JJiVDgxqV3h3FPYelHedAWIVjIlqRKtvU7jQCHLtMty7UpHQD7IVnFI_m8HDd76XQ/exec";
 
+  // கணினியின் தற்போதைய தேதியை இயல்பாகக் கொண்டு வருதல்
   const DEFAULT_NOTICE = {
     date: new Date().toISOString().slice(0, 10),
     content: "அனைத்துப் பள்ளித் தலைமையாசிரியர்களும் நிலுவையில் உள்ள விடுப்பு மற்றும் பணி வரன்முறை சார்ந்த கருத்துருக்களை உரிய ஆவணங்களுடன் இவ்வலுவலக அ2 பிரிவிற்கு உடனடியாக அனுப்பி வைக்குமாறு தெரிவிக்கப்படுகிறது."
@@ -995,7 +996,13 @@
   }
 
   function getNoticeBoardData() {
-    return JSON.parse(localStorage.getItem('system_notice_v3')) || DEFAULT_NOTICE;
+    const saved = JSON.parse(localStorage.getItem('system_notice_v3'));
+    if (saved) return saved;
+    // கணினியின் தற்போதைய தேதியை எப்போதும் இயல்பாக வழங்க
+    return {
+      date: new Date().toISOString().slice(0, 10),
+      content: DEFAULT_NOTICE.content
+    };
   }
 
   function renderNoticeBoard(noticeData) {
@@ -1472,8 +1479,6 @@
       if (file.isPinned) tr.className = 'pinned-row';
 
       const safeOfficeNo = encodeURIComponent(file.officeNo);
-      let receiptBtnHTML = isAdmin ? `<button class="btn btn-sm btn-success" onclick="generateReceiptPDF(decodeURIComponent('${safeOfficeNo}'))">ரசீது PDF</button>` : '';
-
       const quickNote = file.quickNote || '';
 
       tr.innerHTML = `
@@ -1500,11 +1505,11 @@
         <td>
           <div style="display:flex; gap:3px; flex-wrap:wrap;">
             <button class="btn btn-sm btn-secondary" onclick="generateHistoryPDF(decodeURIComponent('${safeOfficeNo}'))">வரலாறு PDF</button>
-            ${receiptBtnHTML}
             ${isAdmin ? `
               <button class="btn btn-sm btn-ja" onclick="sendSingleFileWhatsApp(decodeURIComponent('${safeOfficeNo}'))" title="WhatsApp பகிர்வு">💬 WA</button>
               <button class="btn btn-sm" onclick="openStatusModal(decodeURIComponent('${safeOfficeNo}'))">நிலை</button>
               <button class="btn btn-sm btn-edit" onclick="openEditModal(decodeURIComponent('${safeOfficeNo}'))" title="விவரங்களை திருத்து">✏️ Edit</button>
+              <button class="btn btn-sm btn-sticker" onclick="printDocketSticker(decodeURIComponent('${safeOfficeNo}'))" title="அட்டை ஸ்டிக்கர்">🏷️ ஸ்டிக்கர்</button>
               ${file.status === 'முடிவுற்றது' ? `<button class="btn btn-sm btn-archive" onclick="archiveSingleFile(decodeURIComponent('${safeOfficeNo}'))" title="காப்பகத்திற்கு மாற்று">📦 Archive</button>` : ''}
               <button class="btn btn-sm btn-danger" onclick="deleteFile(decodeURIComponent('${safeOfficeNo}'))" title="கோப்பினை நீக்கு">🗑️ நீக்கு</button>
             ` : ''}
@@ -1937,6 +1942,57 @@
     });
   }
 
+  // நீங்கள் கேட்ட வடிவிலான புதிய ஸ்டிக்கர் வடிவமைப்பு
+  function printDocketSticker(officeNo) {
+    const file = getFileSafely(officeNo);
+    if (!file) return;
+
+    const formattedDate = formatTamilDate(file.officeDate);
+    const win = window.open('', '_blank');
+    if (!win) {
+      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
+      return;
+    }
+
+    win.document.open();
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Sticker_${file.officeNo}</title>
+        <style>
+          @page { size: 105mm 72mm; margin: 4mm; }
+          body { font-family: 'Mukta Malar', 'Segoe UI', Arial, sans-serif; color: #000; margin: 0; padding: 10px; box-sizing: border-box; }
+          .sticker-box { border: 2px solid #000; border-radius: 6px; padding: 12px; box-sizing: border-box; min-height: 60mm; font-size: 0.95rem; line-height: 1.5; }
+        </style>
+      </head>
+      <body>
+        <div class="sticker-box">
+          <div style="text-align: center; font-weight: bold; margin-bottom: 8px; font-size: 1.05rem;">
+            மாவட்டக்கல்வி அலுவலகம்,<br>
+            <span style="font-size: 0.95rem;">(இடைநிலை) ஈரோடு.</span>
+          </div>
+          <div style="margin-bottom: 6px;">
+            <b>பிரிவு : அ2</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>கோப்பு எண்:</b> ${file.officeNo}
+          </div>
+          <div style="margin-bottom: 6px;">
+            <b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}
+          </div>
+          <div style="margin-bottom: 6px;">
+            <b>கோரிக்கை:</b> ${file.category || 'Common'}
+          </div>
+          <div>
+            <b>கோரிக்கை விவரம்:</b><br>
+            <div style="margin-top: 2px; font-size: 0.9rem; font-weight: normal; border-top: 1px dashed #666; padding-top: 4px;">${file.subject}</div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 300);
+  }
+
   function generateHandoverSlip() {
     const pendingFiles = memoryFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது');
     let rows = '';
@@ -2233,63 +2289,6 @@
           <div style="text-align: center;"><p style="margin:0;">பிரிவு எழுத்தர் கையொப்பம்<br><span style="font-size: 0.75rem; font-weight: normal;">(பிரிவு: அ2)</span></p></div>
           <div class="digital-seal">★ VERIFIED ★<br>DEO ERODE<br>SECTION A2</div>
           <div style="text-align: center;"><p style="margin:0;">கண்காணிப்பாளர் / PA<br><span style="font-size: 0.75rem; font-weight: normal;">மாவட்டக் கல்வி அலுவலகம், ஈரோடு</span></p></div>
-        </div>
-      </body>
-      </html>
-    `);
-    win.document.close();
-    setTimeout(() => { win.print(); }, 300);
-  }
-
-  function generateReceiptPDF(officeNo) {
-    const file = getFileSafely(officeNo);
-    if (!file) return;
-
-    const formattedDate = formatTamilDate(file.officeDate);
-    const win = window.open('', '_blank');
-    if (!win) return;
-
-    win.document.open();
-    win.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Receipt_${file.officeNo}</title>
-        <style>
-          @page { size: A4 portrait; margin: 10mm; }
-          body { font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin: 0; padding: 20px; }
-          table { width: 100%; border-collapse: collapse; }
-          .digital-seal { border: 2px dashed #0c4a6e; border-radius: 50%; width: 75px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; color: #0c4a6e; text-align: center; }
-        </style>
-      </head>
-      <body>
-        <div style="padding: 22px; border: 2px solid #000; max-width: 680px; margin: 0 auto; box-sizing: border-box;">
-          <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 14px;">
-            <h2 style="margin:0; font-size:1.3rem;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை) ஈரோடு</h2>
-            <p style="margin:3px 0; font-weight:bold; font-size:0.95rem;">பிரிவு : அ2 &nbsp;&nbsp;|&nbsp;&nbsp; உதவியாளர் : து.சதீஷ்குமார்</p>
-            <h3 style="margin:5px 0 0 0; text-decoration: underline; font-size:1rem;">கோரிக்கை மனு ஏற்பு ஒப்புகைச் சீட்டு (Acknowledgement)</h3>
-          </div>
-          
-          <table style="width:100%; border:none;">
-            <tr>
-              <td style="border:none; padding:4px 0; width:35%; font-size:0.88rem;"><b>அலுவலக கோப்பு எண்:</b></td>
-              <td style="border:none; padding:4px 0; font-size:0.88rem;">
-                <b>${file.officeNo}</b>
-                ${file.prevRefNo ? `<br><small style="color:#0369a1; font-weight:bold;">முந்தைய ந.க.: ${file.prevRefNo}</small>` : ''}
-              </td>
-            </tr>
-            <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>பெறப்பட்ட தேதி:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${formattedDate}</td></tr>
-            <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>பள்ளியின் பெயர்:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>${SCHOOL_NAMES[file.schoolId] || 'Others'}</b></td></tr>
-            <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>பள்ளி பதிவேடு எண்:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${file.schoolRegNo || '-'}</td></tr>
-            <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>மனு வகை & முன்னுரிமை:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${file.category || 'Common'} | ${file.priority}</td></tr>
-            <tr><td style="border:none; padding:4px 0; font-size:0.88rem;"><b>கோரிக்கை விவரம்:</b></td><td style="border:none; padding:4px 0; font-size:0.88rem;">${file.subject}</td></tr>
-          </table>
-
-          <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size:0.85rem;">
-            <span>பெறுபவர் கையொப்பம்</span>
-            <div class="digital-seal">OFFICIAL SEAL<br>DEO ERODE<br>SECTION A2</div>
-            <span>பிரிவு எழுத்தர் (அ2 பிரிவு)</span>
-          </div>
         </div>
       </body>
       </html>
