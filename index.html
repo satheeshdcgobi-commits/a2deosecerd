@@ -18,8 +18,6 @@
       --card-bg: rgba(255, 255, 255, 0.95);
       --text: #0f172a;
       --border: #cbd5e1;
-      --ja-color: #16a34a;
-      --hm-color: #0d9488;
     }
 
     body {
@@ -29,29 +27,17 @@
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      transition: background 0.3s ease;
     }
-
-    body.theme-ADMIN { background: #f8fafc; }
-    body.theme-SCH_1 { background: #f0fdf4; }
-    body.theme-SCH_2 { background: #f0f9ff; }
-    body.theme-SCH_3 { background: #faf5ff; }
-    body.theme-SCH_4 { background: #fffbeb; }
-    body.theme-SCH_5 { background: #f0fdfa; }
-    body.theme-SCH_OTHERS { background: #fefce8; }
 
     .container { max-width: 1440px; margin: 0 auto; padding: 20px; }
 
     .hero-banner {
-      background: linear-gradient(135deg, rgba(8, 47, 73, 0.92) 0%, rgba(12, 74, 110, 0.90) 100%),
-                  url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      background: linear-gradient(135deg, rgba(8, 47, 73, 0.92) 0%, rgba(12, 74, 110, 0.90) 100%);
       color: white;
       padding: 24px 28px;
       border-radius: 18px;
       margin-bottom: 16px;
       box-shadow: 0 15px 30px -5px rgba(12, 74, 110, 0.35);
-      position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.2);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -66,29 +52,15 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      letter-spacing: -0.5px;
     }
 
     .badge-tn {
       background: rgba(255,255,255,0.18);
-      backdrop-filter: blur(10px);
       padding: 5px 14px;
       border-radius: 20px;
       font-size: 0.82rem;
       font-weight: 700;
-      border: 1px solid rgba(255,255,255,0.3);
       color: #fef08a;
-    }
-
-    .cloud-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.2);
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: bold;
     }
 
     .card {
@@ -98,13 +70,11 @@
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04);
       margin-bottom: 20px;
       border: 1px solid var(--border);
-      backdrop-filter: blur(8px);
     }
 
     .login-card {
       max-width: 460px;
       margin: 30px auto;
-      box-shadow: 0 25px 35px -5px rgba(0,0,0,0.1);
       border-top: 6px solid var(--gov-blue);
     }
 
@@ -122,13 +92,6 @@
       background: #fafafa;
     }
 
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
-    }
-
     .btn {
       background: var(--gov-blue);
       color: white;
@@ -142,26 +105,18 @@
       gap: 6px;
       text-decoration: none;
       font-size: 0.84rem;
-      transition: all 0.2s ease;
     }
-    .btn:hover { background: var(--gov-dark); transform: translateY(-1px); }
-    .btn-success { background: #16a34a; }
-    .btn-secondary { background: #475569; }
-    .btn-danger { background: #dc2626; }
-    .btn-warning { background: #d97706; color: white; }
+    .btn:hover { background: var(--gov-dark); }
     .btn-primary { background: var(--accent); }
-    .btn-sm { padding: 5px 9px; font-size: 0.78rem; border-radius: 6px; }
+    .btn-sm { padding: 5px 9px; font-size: 0.78rem; }
 
-    .header-btn-pwd { background: rgba(255,255,255,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
-    .header-btn-logout { background: #ef4444; color: #fff; }
-
-    /* Sticky Note Style for School Panel */
+    /* Sticky Note Style */
     .sticky-pin-card {
       background: #fef08a;
       color: #713f12;
-      padding: 15px 20px;
+      padding: 18px 22px;
       border-radius: 4px;
-      box-shadow: 3px 4px 10px rgba(0,0,0,0.15);
+      box-shadow: 3px 4px 12px rgba(0,0,0,0.15);
       position: relative;
       font-family: 'Comic Sans MS', cursive, sans-serif, Arial;
       transform: rotate(1deg);
@@ -178,7 +133,7 @@
     }
   </style>
 </head>
-<body class="theme-ADMIN">
+<body>
 
 <div class="container">
 
@@ -188,54 +143,21 @@
       <div style="display:flex; align-items:center; gap:8px; margin-bottom: 6px;">
         <span class="badge-tn">🏛️ தமிழ்நாடு பள்ளிக் கல்வித்துறை</span>
         <span class="badge-tn">பிரிவு : அ2</span>
-        <span class="cloud-status" id="cloudStatusBadge">🟢 Cloud Synced</span>
       </div>
       <h1>மாவட்டக் கல்வி அலுவலகம் (இடைநிலை) ஈரோடு</h1>
       <p style="margin:4px 0 0 0; font-size:0.95rem; color:#e0f2fe;">கோப்பு கண்காணிப்பு, நிகழ்நேர தகவல் & ஆய்வுக் கட்டுப்பாட்டு தளம்</p>
     </div>
-    
-    <div style="text-align: right;">
-      <div style="color:#bae6fd; font-weight: 700; font-size:0.92rem; margin-bottom: 6px;">
-        உதவியாளர்: து.சதீஷ்குமார்
-      </div>
-      <div id="headerUserActions" style="display: none; justify-content: flex-end; gap: 6px;">
-        <button class="btn btn-sm header-btn-pwd" onclick="openPwdModal()">🔑 கடவுச்சொல்</button>
-        <button class="btn btn-sm header-btn-logout" onclick="logout()">🚪 வெளியேறு</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- QR Scan Direct View -->
-  <div id="directScanViewCard" class="card" style="display:none; border: 3px solid #0284c7; background: #f0f9ff;">
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #bae6fd; padding-bottom:8px; margin-bottom:12px;">
-      <h3 style="margin:0; color:#0369a1;">📱 உயர் அலுவலர் கோப்பு நேரடி ஆய்வு அட்டை (Live Officer Inspection)</h3>
-      <button class="btn btn-sm btn-danger" onclick="closeDirectScanView()">முகப்பு செல் ✕</button>
-    </div>
-    <div id="directScanDetails"></div>
   </div>
 
   <!-- முகப்புப் பக்க அறிவிப்புப் பலகை (எடிட் பட்டன் மற்றும் ஸ்டிக்கி நோட் இல்லாத தூய்மையான பகுதி) -->
   <div style="margin: 10px 0;">
-    <div style="background: #fff; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+    <div style="background: #fff; border-left: 4px solid #0284c7; padding: 14px 18px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
         <span style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">📌 புதிய அறிவிப்பு</span>
         <span id="noticeDateTag" style="background: #bfdbfe; color: #1e3a8a; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">தேதி: 27/08/2026</span>
       </div>
       <p id="noticeContentText" style="margin: 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5; font-weight: 500;">மாவட்ட கல்வி அலுவலக அறிவிப்புப் பலகைச் செய்திகள் இங்கே தோன்றும்...</p>
     </div>
-  </div>
-
-  <!-- தினமொரு திருக்குறள் -->
-  <div class="card" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-left: 6px solid #d97706;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <div style="font-size:0.92rem; font-weight:800; color:#92400e;">
-        <span>📜 தினமொரு திருக்குறள்</span>
-        <span id="kuralNumberTag" style="background:#fde68a; padding:2px 8px; border-radius:12px; font-size:0.75rem; margin-left:6px;"></span>
-      </div>
-      <small id="kuralAthikaramTag" style="font-weight:700; color:#b45309;"></small>
-    </div>
-    <p id="kuralLineText" style="font-size:0.95rem; font-weight:700; color:#78350f; line-height:1.5; margin:0 0 4px 0;"></p>
-    <p id="kuralMeaningText" style="font-size:0.85rem; color:#451a03; margin:0;"></p>
   </div>
 
   <!-- உள்நுழைவு திரை -->
@@ -245,7 +167,7 @@
     
     <div class="form-group">
       <label>பயனர் தேர்வு (User Type):</label>
-      <select id="userSelect" onchange="previewTheme(this.value)">
+      <select id="userSelect">
         <option value="ADMIN">👑 பிரிவு எழுத்தர் (Section Assistant) - பிரிவு அ2</option>
         <option value="SCH_1">🏫 பெரியசாமி உயர்நிலைப்பள்ளி அம்மாபேட்டை</option>
         <option value="SCH_2">🏫 புனித செபஸ்தியார் உயர்நிலைப்பள்ளி நகலூர்</option>
@@ -262,17 +184,14 @@
     <button class="btn" style="width: 100%; justify-content: center; padding: 11px; font-size: 0.95rem;" onclick="login()">பாதுகாப்பாக உள்நுழைக ➜</button>
   </div>
 
-  <!-- முதன்மை டாஷ்போர்டு -->
+  <!-- முதன்மை டாஷ்போர்டு (Dashboard) -->
   <div id="dashboardSection" style="display: none;">
-    <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 12px 18px;">
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <h2 id="currentUserHeading" style="margin:0; font-size:1.2rem;">டாஷ்போர்டு</h2>
-        <small id="userRoleText" style="color: #64748b; font-weight: 500;"></small>
+        <h2 id="currentUserHeading" style="margin:0;">டாஷ்போர்டு</h2>
+        <small id="userRoleText" style="color: #64748b;"></small>
       </div>
-      <div style="display:flex; gap: 6px; flex-wrap: wrap;">
-        <button class="btn btn-secondary btn-sm" onclick="syncDataFromCloud()">🔄 Refresh Cloud</button>
-        <button class="btn btn-danger btn-sm" onclick="logout()">🚪 வெளியேறு</button>
-      </div>
+      <button class="btn btn-sm" style="background: #ef4444;" onclick="logout()">🚪 வெளியேறு</button>
     </div>
 
     <!-- பள்ளி லாகின் செய்யும்போது மட்டும் தெரியும் 'Pinned Sticky Notes' பகுதி -->
@@ -319,20 +238,12 @@
 
   let currentUser = null;
 
-  function previewTheme(val) {
-    document.body.className = 'theme-' + val;
-  }
-
   function login() {
     const userType = document.getElementById('userSelect').value;
-    const pwd = document.getElementById('passwordInput').value;
-    
-    // எளிய லாகின் சரிபார்ப்பு (உங்கள் ஒரிஜினல் பாஸ்வேர்ட் லாஜிக்கை அப்படியே வைத்துக்கொள்ளலாம்)
     currentUser = { role: userType === 'ADMIN' ? 'admin' : 'school', schoolId: userType };
     
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('dashboardSection').style.display = 'block';
-    document.getElementById('headerUserActions').style.display = 'flex';
 
     if (currentUser.role === 'admin') {
       document.getElementById('adminSchoolCircularPanel').style.display = 'block';
@@ -353,7 +264,6 @@
     currentUser = null;
     document.getElementById('loginSection').style.display = 'block';
     document.getElementById('dashboardSection').style.display = 'none';
-    document.getElementById('headerUserActions').style.display = 'none';
     document.getElementById('passwordInput').value = '';
   }
 
@@ -397,10 +307,6 @@
     } else {
       stickyEl.innerText = "உங்களுக்கு புதிய சுற்றறிக்கைகள் எதுவும் இல்லை.";
     }
-  }
-
-  function syncDataFromCloud() {
-    alert('கிளவுட் தரவுகள் புதுப்பிக்கப்பட்டன!');
   }
 </script>
 
