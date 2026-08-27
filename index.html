@@ -1107,39 +1107,26 @@
   }
 
   function login() {
-    try {
-      const userSelect = document.getElementById('userSelect');
-      const passwordInput = document.getElementById('passwordInput');
+    const user = document.getElementById('userSelect').value;
+    const pwd = document.getElementById('passwordInput').value;
+    const passwords = getPasswords();
+
+    if (passwords[user] === pwd || pwd === "admin@deo2026") {
+      currentUser = user;
+      document.body.className = `theme-${user}`;
       
-      if (!userSelect || !passwordInput) {
-        alert("உள்நுழைவு படிவம் முழுமையாகக் கிடைக்கவில்லை!");
-        return;
-      }
+      const loginSec = document.getElementById('loginSection');
+      const dashSec = document.getElementById('dashboardSection');
+      const actions = document.getElementById('headerUserActions');
 
-      const user = userSelect.value;
-      const pwd = passwordInput.value;
-      const passwords = getPasswords();
+      if (loginSec) loginSec.style.display = 'none';
+      if (dashSec) dashSec.style.display = 'block';
+      if (actions) actions.style.display = 'flex';
 
-      if (passwords[user] === pwd || pwd === "admin@deo2026") {
-        currentUser = user;
-        document.body.className = `theme-${user}`;
-        
-        const loginSec = document.getElementById('loginSection');
-        const dashSec = document.getElementById('dashboardSection');
-        const actions = document.getElementById('headerUserActions');
-
-        if (loginSec) loginSec.style.display = 'none';
-        if (dashSec) dashSec.style.display = 'block';
-        if (actions) actions.style.display = 'flex';
-
-        passwordInput.value = '';
-        setupDashboard();
-      } else {
-        alert("தவறான கடவுச்சொல்! சரியான கடவுச்சொல்லை உள்ளிடவும்.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("உள்நுழைவதில் பிழை ஏற்பட்டுள்ளது. பக்கத்தை ஒருமுறை ரிப்ரெஷ் செய்யவும்.");
+      document.getElementById('passwordInput').value = '';
+      setupDashboard();
+    } else {
+      alert("தவறான கடவுச்சொல்! சரியான கடவுச்சொல்லை உள்ளிடவும்.");
     }
   }
 
@@ -1162,11 +1149,8 @@
 
   function setupDashboard() {
     const isAdmin = currentUser === 'ADMIN';
-    const heading = document.getElementById('currentUserHeading');
-    const roleText = document.getElementById('userRoleText');
-    
-    if (heading) heading.innerText = isAdmin ? "பிரிவு எழுத்தர் மேலாண்மை (பிரிவு : அ2)" : SCHOOL_NAMES[currentUser];
-    if (roleText) roleText.innerText = isAdmin ? "உதவியாளர் : து.சதீஷ்குமார் | நேரலை கிளவுட் தளம்" : "பள்ளி பயனர் பிரிவு";
+    document.getElementById('currentUserHeading').innerText = isAdmin ? "பிரிவு எழுத்தர் மேலாண்மை (பிரிவு : அ2)" : SCHOOL_NAMES[currentUser];
+    document.getElementById('userRoleText').innerText = isAdmin ? "உதவியாளர் : து.சதீஷ்குமார் | நேரலை கிளவுட் தளம்" : "பள்ளி பயனர் பிரிவு";
     
     const schoolSpecificFilter = document.getElementById('schoolSpecificFilter');
     const scorecardBtn = document.getElementById('scorecardBtn');
