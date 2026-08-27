@@ -693,7 +693,7 @@
     <div class="form-group"><label>அறிவிப்பு / சுற்றறிக்கை விவரம்:</label><textarea id="noticeInputContent" rows="4"></textarea></div>
     <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
       <button onclick="saveNoticeBoardData()" id="publishNoticeBtn" class="btn btn-notice" style="flex:1;">கிளவுடில் வெளியிடு (Publish)</button>
-      <button onclick="broadcastNoticeToSchools()" class="btn btn-ja" style="flex:1;">💬 WhatsApp Broadcast</button>
+      <button onclick="broadcastNoticeToSchools()" class="btn btn-ja" style="flex:1;" title="அனைத்து பள்ளிகளுக்கும் WhatsApp மூலம் அனுப்ப">💬 WhatsApp Broadcast</button>
       <button onclick="closeNoticeModal()" class="btn btn-danger">மூடு</button>
     </div>
   </div>
@@ -738,7 +738,7 @@
     <div class="form-group"><label>புதிய கடவுச்சொல்:</label><input type="password" id="newPwdInput"></div>
     <div style="display:flex; gap:10px;">
       <button onclick="saveNewPassword()" class="btn" style="flex:1;">சேமி</button>
-      <button onclick="closePwdModal()" class="btn btn-danger" style="flex:1;">மூடு</button>
+      <button onclick="closePwdModal()" class="btn btn-danger" style="flex:1;">ரத்து</button>
     </div>
   </div>
 </div>
@@ -746,6 +746,7 @@
 <script>
   const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwa8JJiVDgxqV3h3FPYelHedAWIVjIlqRKtvU7jQCHLtMty7UpHQD7IVnFI_m8HDd76XQ/exec";
 
+  // இந்திய நேரப்படி (IST) தற்போதைய சரியான தேதியை வழங்கும் முறை (Timezone Shift முற்றிலுமாகத் தவிர்க்கப்பட்டது)
   function getLocalDateString() {
     const d = new Date();
     const year = d.getFullYear();
@@ -772,6 +773,7 @@
     document.getElementById('kuralMeaningText').innerHTML = `<b>பொருள்:</b> ${todayKural.meaning}`;
   }
 
+  // YYYY-MM-DD தேதியை எந்தவித மாற்றமும் இல்லாமல் நேரடியாக DD/MM/YYYY என மாற்றும் முறை
   function formatTamilDate(dateStr) {
     if (!dateStr) return "-";
     const cleanStr = String(dateStr).split('T')[0];
@@ -858,8 +860,6 @@
   let startDateFilter = null;
   let endDateFilter = null;
 
-  let statusChartInstance = null;
-  let categoryChartInstance = null;
   let memoryFiles = [];
 
   function previewTheme(userKey) { document.body.className = `theme-${userKey}`; }
@@ -867,8 +867,6 @@
   function getContacts() { return JSON.parse(localStorage.getItem('system_contacts_v15')) || DEFAULT_CONTACTS; }
   function getLocalFiles() { return JSON.parse(localStorage.getItem('school_office_files_v15')) || []; }
   function saveLocalFiles(files) { localStorage.setItem('school_office_files_v15', JSON.stringify(files)); }
-  function getArchivedFiles() { return JSON.parse(localStorage.getItem('archived_files_v15')) || []; }
-  function saveArchivedFiles(files) { localStorage.setItem('archived_files_v15', JSON.stringify(files)); }
 
   function getFileSafely(officeNo) {
     if (!officeNo) return null;
@@ -1026,7 +1024,7 @@
   function renderDashboard() {
     const allFiles = memoryFiles;
     const isAdmin = currentUser === 'ADMIN';
-    const currentMonthStr = new Date().toISOString().slice(0, 7);
+    const currentMonthStr = getLocalDateString().slice(0, 7);
 
     let accessibleFiles = isAdmin ? allFiles : allFiles.filter(f => f.schoolId === currentUser);
 
