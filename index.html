@@ -1826,7 +1826,7 @@
     if (!file) return;
 
     const formattedDate = formatTamilDate(file.officeDate);
-    const liveScanURL = window.location.href.split('?')[0] + "?file=" + encodeURIComponent(file.officeNo);
+    const liveScanURL = "https://satheeshhdcgobi-commits.github.io/a2deosecerd/?file=" + encodeURIComponent(file.officeNo);
     const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=2&data=${encodeURIComponent(liveScanURL)}`;
 
     const win = window.open('', '_blank');
