@@ -2244,18 +2244,21 @@
     setTimeout(() => { win.print(); }, 300);
   }
 
-  function printDocketSticker(officeNo) {
+ function printDocketSticker(officeNo) {
     const file = getFileSafely(officeNo);
-    if (!file) return;
-
-    const win = window.open('', '_blank');
-    if (!win) {
-      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
+    if (!file) {
+      alert("கோப்பின் விவரங்களைக் கண்டறிய முடியவில்லை!");
       return;
     }
 
-    win.document.open();
-    win.document.write(`
+    const stickerWindow = window.open('', '_blank');
+    if (!stickerWindow) {
+      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! தயவுசெய்து உங்கள் பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
+      return;
+    }
+
+    stickerWindow.document.open();
+    stickerWindow.document.write(`
       <!DOCTYPE html>
       <html>
       <head>
@@ -2297,22 +2300,26 @@
           <div>
             <b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}
           </div>
-          <div style="display: flex; justify-content: space-between;">
-            <span><b>கோரிக்கை:</b> ${file.category || 'Common'}</span>
-            <span><b>பக்கம் எண்:</b> ..........</span>
-          </div>
           <div>
-            <b>முடிவின் தன்மை:</b> ........................................................
+            <b>கோரிக்கை:</b> ${file.category || 'Common'}
           </div>
           <div>
             <b>கோரிக்கை விவரம்:</b> ${file.subject}
           </div>
+          <div style="display: flex; justify-content: space-between; border-top: 1px dotted #000; padding-top: 3px;">
+            <span><b>பக்கம் எண்:</b> ..........</span>
+            <span><b>முடிவின் தன்மை:</b> ........................</span>
+          </div>
         </div>
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        </script>
       </body>
       </html>
     `);
-    win.document.close();
-    setTimeout(() => { win.print(); }, 300);
+    stickerWindow.document.close();
   }
 
   function generateMonthlyArrearReport() {
