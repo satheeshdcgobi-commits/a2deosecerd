@@ -858,7 +858,7 @@
   </div>
 </div>
 
-<!-- அறிவிப்புப் பலகை பாப்-அப் (WhatsApp Broadcast வசதியுடன்) -->
+<!-- அறிவிப்புப் பலகை பாப்-அப் -->
 <div id="noticeModal" class="modal">
   <div class="modal-content">
     <h3>📢 பொது அறிவிப்புப் பலகை மேலாண்மை</h3>
@@ -938,7 +938,6 @@
 <script>
   const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwa8JJiVDgxqV3h3FPYelHedAWIVjIlqRKtvU7jQCHLtMty7UpHQD7IVnFI_m8HDd76XQ/exec";
 
-  // கணினியின் தற்போதைய தேதியை இயல்பாகக் கொண்டு வருதல்
   const DEFAULT_NOTICE = {
     date: new Date().toISOString().slice(0, 10),
     content: "அனைத்துப் பள்ளித் தலைமையாசிரியர்களும் நிலுவையில் உள்ள விடுப்பு மற்றும் பணி வரன்முறை சார்ந்த கருத்துருக்களை உரிய ஆவணங்களுடன் இவ்வலுவலக அ2 பிரிவிற்கு உடனடியாக அனுப்பி வைக்குமாறு தெரிவிக்கப்படுகிறது."
@@ -989,7 +988,9 @@
 
   function formatTamilDate(dateStr) {
     if (!dateStr) return "-";
-    const parts = String(dateStr).split('T')[0].split('-');
+    // ஒருவேளை YYYY-MM-DD வடிவத்தில் இருந்தால் தேதியை சரியாக DD/MM/YYYY என மாற்றும்
+    const cleanStr = String(dateStr).split('T')[0];
+    const parts = cleanStr.split('-');
     if (parts.length === 3) {
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
