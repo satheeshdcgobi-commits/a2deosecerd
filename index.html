@@ -938,9 +938,9 @@
 <script>
   const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwa8JJiVDgxqV3h3FPYelHedAWIVjIlqRKtvU7jQCHLtMty7UpHQD7IVnFI_m8HDd76XQ/exec";
 
-  // நேர மாற்றம் (Timezone Shift) காரணமாக நாள் மாறுவதைத் தவிர்க்க முறையான உள்ளூர் தேதியைப் பெறுதல்
-  function getLocalDateString(dateInput) {
-    const d = dateInput ? new Date(dateInput) : new Date();
+  // நேர மாற்றம் காரணமாக நாள் மாறுவதைத் தவிர்க்க முறையான உள்ளூர் தேதியைப் பெறுதல்
+  function getLocalDateString() {
+    const d = new Date();
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
@@ -995,6 +995,7 @@
     document.getElementById('kuralMeaningText').innerHTML = `<b>பொருள்:</b> ${todayKural.meaning}`;
   }
 
+  // YYYY-MM-DD தேதியை DD/MM/YYYY என மாற்றுதல்
   function formatTamilDate(dateStr) {
     if (!dateStr) return "-";
     const cleanStr = String(dateStr).split('T')[0];
@@ -1850,7 +1851,7 @@
     if (!file) return;
 
     const nowTimeStr = new Date().toLocaleTimeString('ta-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const nowDateStr = formatTamilDate(new Date().toISOString().slice(0,10));
+    const nowDateStr = formatTamilDate(getLocalDateString());
 
     file.currentWith = newOfficer;
     file.status = newStatus;
@@ -1932,7 +1933,7 @@
   }
 
   function checkDocketAlerts(playSoundOnLogin = false) {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = getLocalDateString();
     const container = document.getElementById('docketReminderList');
     container.innerHTML = '';
 
@@ -1995,7 +1996,7 @@
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px;">
           <h2 style="margin:0; font-size: 1.2rem;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை), ஈரோடு</h2>
           <h3 style="margin:3px 0 0 0; text-decoration: underline;">பிரிவு: அ2 - கோப்புகள் பொறுப்பு ஒப்படைப்புப் பதிவேடு (Charge Handover Slip)</h3>
-          <p style="margin:3px 0 0 0; font-size: 0.85rem;">ஒப்படைக்கும் நாள்: ${formatTamilDate(new Date().toISOString().slice(0,10))}</p>
+          <p style="margin:3px 0 0 0; font-size: 0.85rem;">ஒப்படைக்கும் நாள்: ${formatTamilDate(getLocalDateString())}</p>
         </div>
         <p>இவ்வலுவலக அ2 பிரிவில் தற்போது நிலுவையில் உள்ள பின்வரும் <b>${pendingFiles.length}</b> கோப்புகளின் விபரம் மற்றும் ஆவணங்கள் முழுமையாக மாற்றுப் பணியாளரிடம் ஒப்படைக்கப்படுகிறது:</p>
         <table>
@@ -2058,7 +2059,7 @@
         <div style="text-align: center; border-bottom: 2px solid #0c4a6e; padding-bottom: 8px; margin-bottom: 12px;">
           <h2 style="margin:0; font-size: 1.25rem; color:#0c4a6e;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை), ஈரோடு - பிரிவு: அ2</h2>
           <h3 style="margin:4px 0 0 0;">ஒட்டுமொத்த நிலுவைக் கோப்புகள் விரிவான அறிக்கை (Consolidated Arrear Slip)</h3>
-          <small>நாள்: ${formatTamilDate(new Date().toISOString().slice(0,10))} | உதவியாளர்: து.சதீஷ்குமார் | மொத்த நிலுவை: ${pendingFiles.length} கோப்புகள்</small>
+          <small>நாள்: ${formatTamilDate(getLocalDateString())} | உதவியாளர்: து.சதீஷ்குமார் | மொத்த நிலுவை: ${pendingFiles.length} கோப்புகள்</small>
         </div>
         <table>
           <thead>
@@ -2122,7 +2123,7 @@
         <div style="text-align: center; border-bottom: 2px solid #0c4a6e; padding-bottom: 8px; margin-bottom: 12px;">
           <h2 style="margin:0; font-size: 1.25rem; color:#0c4a6e;">மாவட்டக் கல்வி அலுவலகம் (இடைநிலை), ஈரோடு - பிரிவு: அ2</h2>
           <h3 style="margin:4px 0 0 0;">${SCHOOL_NAMES[currentUser]} - கோப்புகள் மற்றும் நிலுவை அறிக்கை</h3>
-          <small>நாள்: ${formatTamilDate(new Date().toISOString().slice(0,10))} | மொத்தக் கோப்புகள்: ${schoolFiles.length}</small>
+          <small>நாள்: ${formatTamilDate(getLocalDateString())} | மொத்தக் கோப்புகள்: ${schoolFiles.length}</small>
         </div>
         <table>
           <thead>
