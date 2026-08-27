@@ -894,11 +894,11 @@
     </div>
     <div class="form-group">
       <label>School JA WhatsApp No (91 உடன்):</label>
-      <input type="text" id="contactJaWhatsappInput" placeholder="எ.கா. 919876543210">
+      <input type="text" id="contactJaWhatsappInput" placeholder="எ.கா. 919443000001">
     </div>
     <div class="form-group">
       <label>School HM WhatsApp No (91 உடன்):</label>
-      <input type="text" id="contactHmWhatsappInput" placeholder="எ.கா. 919876543211">
+      <input type="text" id="contactHmWhatsappInput" placeholder="எ.கா. 919443000011">
     </div>
     <div style="display:flex; gap:10px; margin-top:15px;">
       <button onclick="saveContactDetails()" class="btn" style="flex:1;">சேமி</button>
@@ -937,7 +937,6 @@
 <script>
   const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwa8JJiVDgxqV3h3FPYelHedAWIVjIlqRKtvU7jQCHLtMty7UpHQD7IVnFI_m8HDd76XQ/exec";
 
-  // கணினியின் தற்போதைய தேதியை இயல்பாகக் கொண்டு வருதல்
   const DEFAULT_NOTICE = {
     date: new Date().toISOString().slice(0, 10),
     content: "அனைத்துப் பள்ளித் தலைமையாசிரியர்களும் நிலுவையில் உள்ள விடுப்பு மற்றும் பணி வரன்முறை சார்ந்த கருத்துருக்களை உரிய ஆவணங்களுடன் இவ்வலுவலக அ2 பிரிவிற்கு உடனடியாக அனுப்பி வைக்குமாறு தெரிவிக்கப்படுகிறது."
@@ -998,7 +997,7 @@
   function getNoticeBoardData() {
     const saved = JSON.parse(localStorage.getItem('system_notice_v3'));
     if (saved) return saved;
-    // கணினியின் தற்போதைய தேதியை எப்போதும் இயல்பாக வழங்க
+    // கணினியின் தற்போதைய தேதியை இயல்பாகக் கொண்டு வருதல்
     return {
       date: new Date().toISOString().slice(0, 10),
       content: DEFAULT_NOTICE.content
@@ -1942,57 +1941,6 @@
     });
   }
 
-  // நீங்கள் கேட்ட வடிவிலான புதிய ஸ்டிக்கர் வடிவமைப்பு
-  function printDocketSticker(officeNo) {
-    const file = getFileSafely(officeNo);
-    if (!file) return;
-
-    const formattedDate = formatTamilDate(file.officeDate);
-    const win = window.open('', '_blank');
-    if (!win) {
-      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
-      return;
-    }
-
-    win.document.open();
-    win.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Sticker_${file.officeNo}</title>
-        <style>
-          @page { size: 105mm 72mm; margin: 4mm; }
-          body { font-family: 'Mukta Malar', 'Segoe UI', Arial, sans-serif; color: #000; margin: 0; padding: 10px; box-sizing: border-box; }
-          .sticker-box { border: 2px solid #000; border-radius: 6px; padding: 12px; box-sizing: border-box; min-height: 60mm; font-size: 0.95rem; line-height: 1.5; }
-        </style>
-      </head>
-      <body>
-        <div class="sticker-box">
-          <div style="text-align: center; font-weight: bold; margin-bottom: 8px; font-size: 1.05rem;">
-            மாவட்டக்கல்வி அலுவலகம்,<br>
-            <span style="font-size: 0.95rem;">(இடைநிலை) ஈரோடு.</span>
-          </div>
-          <div style="margin-bottom: 6px;">
-            <b>பிரிவு : அ2</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>கோப்பு எண்:</b> ${file.officeNo}
-          </div>
-          <div style="margin-bottom: 6px;">
-            <b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}
-          </div>
-          <div style="margin-bottom: 6px;">
-            <b>கோரிக்கை:</b> ${file.category || 'Common'}
-          </div>
-          <div>
-            <b>கோரிக்கை விவரம்:</b><br>
-            <div style="margin-top: 2px; font-size: 0.9rem; font-weight: normal; border-top: 1px dashed #666; padding-top: 4px;">${file.subject}</div>
-          </div>
-        </div>
-      </body>
-      </html>
-    `);
-    win.document.close();
-    setTimeout(() => { win.print(); }, 300);
-  }
-
   function generateHandoverSlip() {
     const pendingFiles = memoryFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது');
     let rows = '';
@@ -2289,6 +2237,77 @@
           <div style="text-align: center;"><p style="margin:0;">பிரிவு எழுத்தர் கையொப்பம்<br><span style="font-size: 0.75rem; font-weight: normal;">(பிரிவு: அ2)</span></p></div>
           <div class="digital-seal">★ VERIFIED ★<br>DEO ERODE<br>SECTION A2</div>
           <div style="text-align: center;"><p style="margin:0;">கண்காணிப்பாளர் / PA<br><span style="font-size: 0.75rem; font-weight: normal;">மாவட்டக் கல்வி அலுவலகம், ஈரோடு</span></p></div>
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 300);
+  }
+
+  // நீங்கள் கேட்ட வடிவிலான புதிய ஸ்டிக்கர் வடிவமைப்பு (14cm x 7cm, Font size 11, TAU - Marutham)
+  function printDocketSticker(officeNo) {
+    const file = getFileSafely(officeNo);
+    if (!file) return;
+
+    const win = window.open('', '_blank');
+    if (!win) {
+      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
+      return;
+    }
+
+    win.document.open();
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Sticker_${file.officeNo}</title>
+        <style>
+          @page { size: 14cm 7cm; margin: 3mm; }
+          body { 
+            font-family: 'TAU-Marutham', 'Mukta Malar', 'Segoe UI', Arial, sans-serif; 
+            font-size: 11pt; 
+            color: #000; 
+            margin: 0; 
+            padding: 5px; 
+            box-sizing: border-box; 
+          }
+          .sticker-box { 
+            border: 2px solid #000; 
+            border-radius: 4px; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            width: 13.4cm; 
+            height: 6.4cm; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+          }
+        </style>
+      </head>
+      <body>
+        <div class="sticker-box">
+          <div style="text-align: center; font-weight: bold; font-size: 12pt; line-height: 1.2;">
+            மாவட்டக்கல்வி அலுவலகம்,<br>
+            <span style="font-size: 11pt;">(இடைநிலை) ஈரோடு.</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold;">
+            <span>பிரிவு : அ2</span>
+            <span>கோப்பு எண்: ${file.officeNo}</span>
+          </div>
+          <div>
+            <b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span><b>கோரிக்கை:</b> ${file.category || 'Common'}</span>
+            <span><b>பக்கம் எண்:</b> ..........</span>
+          </div>
+          <div>
+            <b>முடிவின் தன்மை:</b> ........................................................
+          </div>
+          <div>
+            <b>கோரிக்கை விவரம்:</b> ${file.subject}
+          </div>
         </div>
       </body>
       </html>
