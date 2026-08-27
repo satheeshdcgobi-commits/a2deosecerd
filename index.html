@@ -988,7 +988,6 @@
 
   function formatTamilDate(dateStr) {
     if (!dateStr) return "-";
-    // ஒருவேளை YYYY-MM-DD வடிவத்தில் இருந்தால் தேதியை சரியாக DD/MM/YYYY என மாற்றும்
     const cleanStr = String(dateStr).split('T')[0];
     const parts = cleanStr.split('-');
     if (parts.length === 3) {
@@ -1108,26 +1107,39 @@
   }
 
   function login() {
-    const user = document.getElementById('userSelect').value;
-    const pwd = document.getElementById('passwordInput').value;
-    const passwords = getPasswords();
-
-    if (passwords[user] === pwd || pwd === "admin@deo2026") {
-      currentUser = user;
-      document.body.className = `theme-${user}`;
+    try {
+      const userSelect = document.getElementById('userSelect');
+      const passwordInput = document.getElementById('passwordInput');
       
-      const loginSec = document.getElementById('loginSection');
-      const dashSec = document.getElementById('dashboardSection');
-      const actions = document.getElementById('headerUserActions');
+      if (!userSelect || !passwordInput) {
+        alert("உள்நுழைவு படிவம் முழுமையாகக் கிடைக்கவில்லை!");
+        return;
+      }
 
-      if (loginSec) loginSec.style.display = 'none';
-      if (dashSec) dashSec.style.display = 'block';
-      if (actions) actions.style.display = 'flex';
+      const user = userSelect.value;
+      const pwd = passwordInput.value;
+      const passwords = getPasswords();
 
-      document.getElementById('passwordInput').value = '';
-      setupDashboard();
-    } else {
-      alert("தவறான கடவுச்சொல்! சரியான கடவுச்சொல்லை உள்ளிடவும்.");
+      if (passwords[user] === pwd || pwd === "admin@deo2026") {
+        currentUser = user;
+        document.body.className = `theme-${user}`;
+        
+        const loginSec = document.getElementById('loginSection');
+        const dashSec = document.getElementById('dashboardSection');
+        const actions = document.getElementById('headerUserActions');
+
+        if (loginSec) loginSec.style.display = 'none';
+        if (dashSec) dashSec.style.display = 'block';
+        if (actions) actions.style.display = 'flex';
+
+        passwordInput.value = '';
+        setupDashboard();
+      } else {
+        alert("தவறான கடவுச்சொல்! சரியான கடவுச்சொல்லை உள்ளிடவும்.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("உள்நுழைவதில் பிழை ஏற்பட்டுள்ளது. பக்கத்தை ஒருமுறை ரிப்ரெஷ் செய்யவும்.");
     }
   }
 
@@ -1150,8 +1162,11 @@
 
   function setupDashboard() {
     const isAdmin = currentUser === 'ADMIN';
-    document.getElementById('currentUserHeading').innerText = isAdmin ? "பிரிவு எழுத்தர் மேலாண்மை (பிரிவு : அ2)" : SCHOOL_NAMES[currentUser];
-    document.getElementById('userRoleText').innerText = isAdmin ? "உதவியாளர் : து.சதீஷ்குமார் | நேரலை கிளவுட் தளம்" : "பள்ளி பயனர் பிரிவு";
+    const heading = document.getElementById('currentUserHeading');
+    const roleText = document.getElementById('userRoleText');
+    
+    if (heading) heading.innerText = isAdmin ? "பிரிவு எழுத்தர் மேலாண்மை (பிரிவு : அ2)" : SCHOOL_NAMES[currentUser];
+    if (roleText) roleText.innerText = isAdmin ? "உதவியாளர் : து.சதீஷ்குமார் | நேரலை கிளவுட் தளம்" : "பள்ளி பயனர் பிரிவு";
     
     const schoolSpecificFilter = document.getElementById('schoolSpecificFilter');
     const scorecardBtn = document.getElementById('scorecardBtn');
@@ -1564,11 +1579,12 @@
     }
 
     const nowTimeStr = new Date().toLocaleTimeString('ta-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const nowDateStr = formatTamilDate(new Date().toISOString().slice(0,10));
+    const rawDateVal = document.getElementById('entryOfficeDate').value;
+    const formattedEntryDate = formatTamilDate(rawDateVal);
 
     const newEntry = {
       officeNo: officeNo,
-      officeDate: document.getElementById('entryOfficeDate').value,
+      officeDate: rawDateVal,
       prevRefNo: document.getElementById('entryPrevRefNo').value.trim(),
       schoolId: document.getElementById('entrySchool').value,
       schoolRegNo: document.getElementById('entrySchoolRegNo').value.trim() || "-",
@@ -1588,7 +1604,7 @@
       history: [
         {
           stage: "மனு பெறப்பட்டு பதிவு செய்யப்பட்டது (பிரிவு: அ2)",
-          date: `${nowDateStr} ${nowTimeStr}`,
+          date: `${formattedEntryDate} ${nowTimeStr}`,
           officer: "பிரிவு எழுத்தர் (து.சதீஷ்குமார்)",
           remark: "கோரிக்கை பெறப்பட்டு அலுவலக கோப்பு உருவாக்கப்பட்டது."
         }
@@ -2253,7 +2269,6 @@
     setTimeout(() => { win.print(); }, 300);
   }
 
-  // 14cm x 7cm, Font size 11, TAU - Marutham வடிவிலான ஸ்டிக்கர்
   function printDocketSticker(officeNo) {
     const file = getFileSafely(officeNo);
     if (!file) return;
