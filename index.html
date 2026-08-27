@@ -365,7 +365,8 @@
         <button class="btn btn-secondary btn-sm" id="docketBtn" onclick="toggleDocketCalendar()">📅 நாள்குறிப்பு பலகை</button>
         <button class="btn btn-secondary btn-sm" id="scorecardBtn" style="display:none;" onclick="toggleScorecard()">📊 மதிப்பீட்டு அட்டை</button>
         <button class="btn btn-secondary btn-sm" id="chartsBtn" onclick="toggleCharts()">📈 வரைபடம்</button>
-        <button class="btn btn-success btn-sm" onclick="exportToExcel()">📊 Excel</button>
+        <button class="btn btn-success btn-sm" onclick="exportToExcel()">📊 Excel (அனைத்தும்)</button>
+        <button class="btn btn-warning btn-sm" onclick="exportPendingToExcel()" id="exportPendingBtn" style="display:none;">📊 Excel (நிலுவை மட்டும்)</button>
         <button class="btn btn-archive btn-sm" id="archiveBtn" style="display:none;" onclick="openArchiveModal()">📦 காப்பகம் (Archive)</button>
         <button class="btn btn-warning btn-sm" id="monthlyReportBtn" style="display:none;" onclick="generateMonthlyArrearReport()">📑 மாதாந்திர அறிக்கை</button>
         <button class="btn btn-danger btn-sm" id="adminConsolidatedPendingBtn" style="display:none;" onclick="generateAdminConsolidatedPendingSlip()">📋 ஒட்டுமொத்த நிலுவை அறிக்கை</button>
@@ -407,10 +408,10 @@
       <div id="docketReminderList" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:10px;"></div>
     </div>
 
-    <!-- MIS வரைபடங்கள் -->
+    <!-- MIS வரைபடங்கள் & கோப்பு நகர்வு வரைபடக் காட்சி (Timeline Flow) -->
     <div id="chartsSection" class="card" style="display: none;">
-      <h3>📊 கோப்பு நிலவர பகுப்பாய்வு (MIS Visual Analytics)</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+      <h3>📊 கோப்பு நிலவர பகுப்பாய்வு & நகர்வு வரைபடம் (MIS Visual Analytics & Timeline Flow)</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom:16px;">
         <div style="background:#f8fafc; padding:12px; border-radius:10px; text-align:center;">
           <h4 style="font-size:0.9rem; margin-bottom:8px;">கோப்பு நிலைகள்</h4>
           <canvas id="statusChart" style="max-height:190px;"></canvas>
@@ -419,6 +420,11 @@
           <h4 style="font-size:0.9rem; margin-bottom:8px;">மனு வகைப்பாடு நிலவரம் (Category-wise)</h4>
           <canvas id="categoryChart" style="max-height:190px;"></canvas>
         </div>
+      </div>
+      <!-- தினசரி கோப்புப் பரிமாற்றச் சுருக்கம் -->
+      <div style="background:#f0f9ff; padding:14px; border-radius:10px; border:1px solid #bae6fd;">
+        <h4 style="color:#0369a1; margin-bottom:6px;">📈 தினசரி கோப்புப் பரிமாற்ற சுருக்கம் (Daily Activity Summary Note)</h4>
+        <p id="dailySummaryText" style="margin:0; font-size:0.88rem; color:#0369a1; font-weight:600;"></p>
       </div>
     </div>
 
@@ -570,6 +576,7 @@
             <option value="Common">Common</option>
           </select>
 
+          <!-- தேதி Filter -->
           <div style="display:flex; align-items:center; gap:4px;">
             <input type="date" id="filterStartDate" style="padding:4px 6px; font-size:0.78rem; width:125px;">
             <span>-</span>
@@ -591,7 +598,7 @@
               <th>பள்ளி பதிவேடு எண்</th>
               <th id="schoolColHeader">பள்ளியின் பெயர்</th>
               <th>மனு வகை</th>
-              <th>கோரிக்கை விவரம்</th>
+              <th>கோரிக்கை விவரம் & குறிப்புகள் (Quick Notes)</th>
               <th>இருப்பிடம் (Rack)</th>
               <th>காலக்கெடு (SLA)</th>
               <th>யாரிடம் நிலுவை</th>
@@ -615,9 +622,6 @@
       <button class="btn btn-sm btn-danger" onclick="closeArchiveModal()">மூடு ✕</button>
     </div>
     <p style="font-size:0.85rem; color:#475569; margin:0 0 12px 0;">முடிவுற்ற பழைய கோப்புகள் இங்கு பாதுகாப்பாக வைக்கப்பட்டுள்ளன.</p>
-    <div style="display:flex; gap:8px; margin-bottom: 12px;">
-      <button class="btn btn-sm btn-success" onclick="exportArchiveToExcel()">📊 காப்பக Excel பதிவிறக்கு</button>
-    </div>
     <div style="overflow-x:auto; max-height: 55vh;">
       <table>
         <thead>
@@ -882,7 +886,6 @@
 </div>
 
 <script>
-  // 👇 நீங்கள் வழங்கிய Web App URL இங்கே இணைக்கப்பட்டுள்ளது 👇
   const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwa8JJiVDgxqV3h3FPYelHedAWIVjIlqRKtvU7jQCHLtMty7UpHQD7IVnFI_m8HDd76XQ/exec";
 
   const DEFAULT_NOTICE = {
@@ -1034,12 +1037,12 @@
   let archivedFiles = [];
 
   function previewTheme(userKey) { document.body.className = `theme-${userKey}`; }
-  function getPasswords() { return JSON.parse(localStorage.getItem('system_passwords_v14')) || DEFAULT_PASSWORDS; }
-  function getContacts() { return JSON.parse(localStorage.getItem('system_contacts_v14')) || DEFAULT_CONTACTS; }
-  function getLocalFiles() { return JSON.parse(localStorage.getItem('school_office_files_v14')) || []; }
-  function saveLocalFiles(files) { localStorage.setItem('school_office_files_v14', JSON.stringify(files)); }
-  function getArchivedFiles() { return JSON.parse(localStorage.getItem('archived_files_v14')) || []; }
-  function saveArchivedFiles(files) { localStorage.setItem('archived_files_v14', JSON.stringify(files)); }
+  function getPasswords() { return JSON.parse(localStorage.getItem('system_passwords_v15')) || DEFAULT_PASSWORDS; }
+  function getContacts() { return JSON.parse(localStorage.getItem('system_contacts_v15')) || DEFAULT_CONTACTS; }
+  function getLocalFiles() { return JSON.parse(localStorage.getItem('school_office_files_v15')) || []; }
+  function saveLocalFiles(files) { localStorage.setItem('school_office_files_v15', JSON.stringify(files)); }
+  function getArchivedFiles() { return JSON.parse(localStorage.getItem('archived_files_v15')) || []; }
+  function saveArchivedFiles(files) { localStorage.setItem('archived_files_v15', JSON.stringify(files)); }
 
   function getFileSafely(officeNo) {
     if (!officeNo) return null;
@@ -1090,8 +1093,8 @@
     document.getElementById('monthlyReportBtn').style.display = isAdmin ? 'inline-block' : 'none';
     document.getElementById('adminConsolidatedPendingBtn').style.display = isAdmin ? 'inline-block' : 'none';
     document.getElementById('handoverBtn').style.display = isAdmin ? 'inline-block' : 'none';
-    document.getElementById('contactsSettingsBtn').style.display = isAdmin ? 'inline-block' : 'none';
     document.getElementById('schoolPendingSlipBtn').style.display = !isAdmin ? 'inline-block' : 'none';
+    document.getElementById('exportPendingBtn').style.display = isAdmin ? 'inline-block' : 'none';
     document.getElementById('adminEntryContainer').style.display = isAdmin ? 'block' : 'none';
     document.getElementById('schoolSearchContainer').style.display = isAdmin ? 'none' : 'block';
     
@@ -1350,6 +1353,10 @@
       if (file.isPinned) tr.className = 'pinned-row';
 
       const safeOfficeNo = encodeURIComponent(file.officeNo);
+      let receiptBtnHTML = isAdmin ? `<button class="btn btn-sm btn-success" onclick="generateReceiptPDF(decodeURIComponent('${safeOfficeNo}'))">ரசீது PDF</button>` : '';
+
+      // கூடுதல் வசதி 3: கோப்பு எண் மூலமாக உடனடிப் பின்தொடர்தல் குறிப்புகள் (Quick Note Addition)
+      const quickNote = file.quickNote || '';
 
       tr.innerHTML = `
         <td style="text-align:center;">
@@ -1364,7 +1371,10 @@
         <td><b>${file.schoolRegNo || '-'}</b></td>
         <td>${SCHOOL_NAMES[file.schoolId] || 'Others'}</td>
         <td><span class="badge-cat">${file.category || 'Common'}</span></td>
-        <td>${file.subject}</td>
+        <td>
+          ${file.subject}
+          ${isAdmin ? `<div style="margin-top:4px;"><input type="text" value="${quickNote}" placeholder="✍️ Quick Note..." onchange="saveQuickNote(decodeURIComponent('${safeOfficeNo}'), this.value)" style="padding:3px 6px; font-size:0.75rem; border:1px dashed #cbd5e1; background:#fffbeb;"></div>` : (quickNote ? `<br><small style="color:#d97706; font-weight:bold;">Note: ${quickNote}</small>` : '')}
+        </td>
         <td><b>${file.rackLocation || 'A2 Rack'}</b></td>
         <td>${slaBadge}</td>
         <td>${pendingWithDisplay}</td>
@@ -1372,7 +1382,7 @@
         <td>
           <div style="display:flex; gap:3px; flex-wrap:wrap;">
             <button class="btn btn-sm btn-secondary" onclick="generateHistoryPDF(decodeURIComponent('${safeOfficeNo}'))">வரலாறு PDF</button>
-            <button class="btn btn-sm btn-success" onclick="generateReceiptPDF(decodeURIComponent('${safeOfficeNo}'))">ரசீது PDF</button>
+            ${receiptBtnHTML}
             ${isAdmin ? `
               <button class="btn btn-sm btn-ja" onclick="sendSingleFileWhatsApp(decodeURIComponent('${safeOfficeNo}'))" title="WhatsApp பகிர்வு">💬 WA</button>
               <button class="btn btn-sm" onclick="openStatusModal(decodeURIComponent('${safeOfficeNo}'))">நிலை</button>
@@ -1387,6 +1397,24 @@
       `;
       tbody.appendChild(tr);
     });
+  }
+
+  // Quick Note சேமிக்கும் வசதி
+  async function saveQuickNote(officeNo, noteText) {
+    const file = getFileSafely(officeNo);
+    if(!file) return;
+    file.quickNote = noteText.trim();
+    saveLocalFiles(memoryFiles);
+    if (GOOGLE_SHEET_API_URL && GOOGLE_SHEET_API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+      try {
+        await fetch(GOOGLE_SHEET_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "save", data: file })
+        });
+      } catch (err) {}
+    }
   }
 
   function filterLiveTable() {
@@ -1421,6 +1449,7 @@
       category: document.getElementById('entryCategory').value,
       priority: document.getElementById('entryPriority').value,
       subject: document.getElementById('entrySubject').value.trim(),
+      quickNote: '',
       isPinned: false,
       docketDate: '',
       deoAttachment: null,
@@ -2383,22 +2412,54 @@
     alert("கோப்பு வெற்றிகரமாக முதன்மைப் பட்டியலுக்கு மீட்டெடுக்கப்பட்டது!");
   }
 
-  function exportArchiveToExcel() {
-    const list = getArchivedFiles();
-    if (list.length === 0) { alert("காப்பகத்தில் கோப்புகள் இல்லை!"); return; }
-    const dataToExport = list.map(f => ({
+  function exportToExcel() {
+    const isAdmin = currentUser === 'ADMIN';
+    const dataToExport = (isAdmin ? memoryFiles : memoryFiles.filter(f => f.schoolId === currentUser)).map(f => {
+      const isClosed = f.status === 'முடிவுற்றது' || f.status === 'நிராகரிக்கப்பட்டது';
+      return {
+        "அலுவலக எண்": f.officeNo,
+        "தேதி": formatTamilDate(f.officeDate),
+        "முந்தைய ந.க. எண்": f.prevRefNo || '-',
+        "பள்ளி பெயர்": SCHOOL_NAMES[f.schoolId] || 'Others',
+        "பள்ளி பதிவேடு எண்": f.schoolRegNo || '-',
+        "அலமாரி இருப்பிடம்": f.rackLocation || 'A2 Rack',
+        "மனு வகை": f.category || 'Common',
+        "முன்னுரிமை": f.priority,
+        "கோரிக்கை விவரம்": f.subject,
+        "Quick Note": f.quickNote || '',
+        "யாரிடம் நிலுவை": isClosed ? '-' : f.currentWith,
+        "நிலை": f.status,
+        "நிலுவை நாட்கள்": isClosed ? '-' : calculateDaysPending(f.officeDate)
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "அனைத்துக்_கோப்புகள்");
+    XLSX.writeFile(wb, `All_Office_Files_${new Date().toISOString().slice(0,10)}.xlsx`);
+  }
+
+  // கூடுதல் வசதி 2: ஒரே கிளிக்கில் அனைத்து நிலுவைக் கோப்புகளையும் Excel-க்கு மாற்றுதல்
+  function exportPendingToExcel() {
+    const pendingFiles = memoryFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது');
+    if (pendingFiles.length === 0) { alert("நிலுவைக் கோப்புகள் எதுவும் இல்லை!"); return; }
+
+    const dataToExport = pendingFiles.map(f => ({
       "அலுவலக எண்": f.officeNo,
       "தேதி": formatTamilDate(f.officeDate),
       "பள்ளி பெயர்": SCHOOL_NAMES[f.schoolId] || 'Others',
       "பள்ளி பதிவேடு எண்": f.schoolRegNo || '-',
       "மனு வகை": f.category || 'Common',
       "கோரிக்கை விவரம்": f.subject,
-      "நிலை": f.status
+      "Quick Note": f.quickNote || '',
+      "யாரிடம் நிலுவை": f.currentWith,
+      "நிலுவை நாட்கள்": calculateDaysPending(f.officeDate)
     }));
+
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "காப்பகக்_கோப்புகள்");
-    XLSX.writeFile(wb, `Archived_Files_${new Date().toISOString().slice(0,10)}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, "நிலுவைக்_கோப்புகள்");
+    XLSX.writeFile(wb, `Pending_Files_List_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
   function trackSingleFile() {
@@ -2461,8 +2522,8 @@
     const urlParams = new URLSearchParams(window.location.search);
     const fileParam = urlParams.get('file');
     if (fileParam) {
-      let allFiles = memoryFiles;
-      if (!allFiles || allFiles.length === 0) allFiles = getLocalFiles();
+      let allFiles = getLocalFiles();
+      if (!allFiles || allFiles.length === 0) allFiles = memoryFiles;
 
       const targetNo = decodeURIComponent(fileParam).trim().toLowerCase();
       const file = allFiles.find(f => String(f.officeNo).trim().toLowerCase() === targetNo);
@@ -2544,6 +2605,12 @@
     const pendingCount = accessibleFiles.filter(f => f.status !== 'முடிவுற்றது' && f.status !== 'நிராகரிக்கப்பட்டது').length;
     const completedCount = accessibleFiles.filter(f => f.status === 'முடிவுற்றது' || f.status === 'நிராகரிக்கப்பட்டது').length;
 
+    // கூடுதல் வசதி 6: தினசரி கோப்புப் பரிமாற்ற சுருக்கம் கணக்கிடுதல்
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayCreated = accessibleFiles.filter(f => f.officeDate === todayStr).length;
+    const todayCompleted = accessibleFiles.filter(f => f.status === 'முடிவுற்றது' && f.history && String(f.history).includes(formatTamilDate(todayStr))).length;
+    document.getElementById('dailySummaryText').innerText = `இன்று புதியதாகப் பெறப்பட்டவை: ${todayCreated} கோப்புகள் | இன்று தீர்வு செய்யப்பட்டவை: ${todayCompleted} கோப்புகள் | தற்போது மொத்த நிலுவை: ${pendingCount} கோப்புகள்.`;
+
     const ctxStatus = document.getElementById('statusChart').getContext('2d');
     if(statusChartInstance) statusChartInstance.destroy();
     statusChartInstance = new Chart(ctxStatus, {
@@ -2581,32 +2648,6 @@
     });
   }
 
-  function exportToExcel() {
-    const isAdmin = currentUser === 'ADMIN';
-    const dataToExport = (isAdmin ? memoryFiles : memoryFiles.filter(f => f.schoolId === currentUser)).map(f => {
-      const isClosed = f.status === 'முடிவுற்றது' || f.status === 'நிராகரிக்கப்பட்டது';
-      return {
-        "அலுவலக எண்": f.officeNo,
-        "தேதி": formatTamilDate(f.officeDate),
-        "முந்தைய ந.க. எண்": f.prevRefNo || '-',
-        "பள்ளி பெயர்": SCHOOL_NAMES[f.schoolId] || 'Others',
-        "பள்ளி பதிவேடு எண்": f.schoolRegNo || '-',
-        "அலமாரி இருப்பிடம்": f.rackLocation || 'A2 Rack',
-        "மனு வகை": f.category || 'Common',
-        "முன்னுரிமை": f.priority,
-        "கோரிக்கை விவரம்": f.subject,
-        "யாரிடம் நிலுவை": isClosed ? '-' : f.currentWith,
-        "நிலை": f.status,
-        "நிலுவை நாட்கள்": isClosed ? '-' : calculateDaysPending(f.officeDate)
-      };
-    });
-
-    const ws = XLSX.utils.json_to_sheet(dataToExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "கோப்புகள்_பட்டியல்");
-    XLSX.writeFile(wb, `Office_Files_${new Date().toISOString().slice(0,10)}.xlsx`);
-  }
-
   function openContactsModal() {
     loadContactDetails(document.getElementById('contactTargetSchool').value);
     document.getElementById('contactsModal').style.display = 'flex';
@@ -2624,7 +2665,7 @@
     const hmPhone = document.getElementById('contactHmWhatsappInput').value.trim();
     const contacts = getContacts();
     contacts[targetSchool] = { jaPhone, hmPhone };
-    localStorage.setItem('system_contacts_v14', JSON.stringify(contacts));
+    localStorage.setItem('system_contacts_v15', JSON.stringify(contacts));
     alert("பள்ளி JA மற்றும் HM எண்கள் வெற்றிகரமாக சேமிக்கப்பட்டது!");
     closeContactsModal();
   }
@@ -2637,7 +2678,7 @@
     if (!newPwd) { alert("கடவுச்சொல்லை உள்ளிடவும்!"); return; }
     const passwords = getPasswords();
     passwords[targetUser] = newPwd;
-    localStorage.setItem('system_passwords_v14', JSON.stringify(passwords));
+    localStorage.setItem('system_passwords_v15', JSON.stringify(passwords));
     alert("கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது!");
     document.getElementById('newPwdInput').value = '';
     closePwdModal();
