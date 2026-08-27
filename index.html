@@ -2244,6 +2244,77 @@
     setTimeout(() => { win.print(); }, 300);
   }
 
+  function printDocketSticker(officeNo) {
+    const file = getFileSafely(officeNo);
+    if (!file) return;
+
+    const win = window.open('', '_blank');
+    if (!win) {
+      alert("பாப்-அப் தடுக்கப்பட்டுள்ளது! பிரவுசரில் Popups-ஐ அனுமதிக்கவும்.");
+      return;
+    }
+
+    win.document.open();
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Sticker_${file.officeNo}</title>
+        <style>
+          @page { size: 14cm 7cm; margin: 3mm; }
+          body { 
+            font-family: 'TAU-Marutham', 'Mukta Malar', 'Segoe UI', Arial, sans-serif; 
+            font-size: 11pt; 
+            color: #000; 
+            margin: 0; 
+            padding: 5px; 
+            box-sizing: border-box; 
+          }
+          .sticker-box { 
+            border: 2px solid #000; 
+            border-radius: 4px; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            width: 13.4cm; 
+            height: 6.4cm; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+          }
+        </style>
+      </head>
+      <body>
+        <div class="sticker-box">
+          <div style="text-align: center; font-weight: bold; font-size: 12pt; line-height: 1.2;">
+            மாவட்டக்கல்வி அலுவலகம்,<br>
+            <span style="font-size: 11pt;">(இடைநிலை) ஈரோடு.</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold;">
+            <span>பிரிவு : அ2</span>
+            <span>கோப்பு எண்: ${file.officeNo}</span>
+          </div>
+          <div>
+            <b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span><b>கோரிக்கை:</b> ${file.category || 'Common'}</span>
+            <span><b>பக்கம் எண்:</b> ..........</span>
+          </div>
+          <div>
+            <b>முடிவின் தன்மை:</b> ........................................................
+          </div>
+          <div>
+            <b>கோரிக்கை விவரம்:</b> ${file.subject}
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 300);
+  }
+
   function generateMonthlyArrearReport() {
     let tableRows = '';
 
