@@ -2694,9 +2694,69 @@
     displayDailyKural();
     renderNoticeBoard();
     memoryFiles = getLocalFiles();
-    checkDirectScanURL();
+      const urlParams = new URLSearchParams(window.location.search);
+  const fileParam = urlParams.get('file');
+  if (fileParam) {
+    setTimeout(() => {
+      let allFiles = getLocalFiles();
+      if (!allFiles || allFiles.length === 0) allFiles = memoryFiles;
+      const targetNo = fileParam.trim().toLowerCase();
+      const file = allFiles.find(f => String(f.officeNo).trim().toLowerCase() === targetNo);
+      if (file) {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'none';
+        let card = document.getElementById('directScanViewCard');
+        if (!card) {
+          card = document.createElement('div');
+          card.id = 'directScanViewCard';
+          card.className = 'card';
+          card.style.cssText = "border: 3px solid #0284c7; background: #f0f9ff; max-width: 800px; margin: 30px auto; padding: 20px;";
+          document.querySelector('.container').prepend(card);
+        }
+        card.style.display = 'block';
+        let histList = file.history || [];
+        if (typeof histList === 'string') {
+          try { histList = JSON.parse(histList); } catch(e) { histList = []; }
+        }
+        let histHTML = '';
+        histList.forEach((h, idx) => {
+          histHTML += `<tr><td style="padding:6px; border:1px solid #cbd5e1;">${idx+1}</td><td style="padding:6px; border:1px solid #cbd5e1;">${h.date||'-'}</td><td style="padding:6px; border:1px solid #cbd5e1; font-weight:bold; color:#0c4a6e;">${h.stage||'-'}</td><td style="padding:6px; border:1px solid #cbd5e1;">${h.remark||'-'}</td></tr>`;
+        });
+        const isClosed = file.status === 'முடிவுற்றது' || file.status === 'நிராகரிக்கப்பட்டது';
+        let downloadAttachmentBtn = file.deoAttachment ? `<a href="${file.deoAttachment}" target="_blank" class="btn btn-sm btn-warning" download="DEO_Order_${file.officeNo}.pdf">📥 இறுதி ஆணை பதிவிறக்கம் (Download Order)</a>` : '';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #bae6fd; padding-bottom:8px; margin-bottom:12px;">
+            <h3 style="margin:0; color:#0369a1;">📱 உயர் அலுவலர் கோப்பு நேரடி ஆய்வு அட்டை (Live Officer Inspection)</h3>
+            <button class="btn btn-sm btn-danger" onclick="location.href='index.html'">முகப்பு செல் ✕</button>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px; font-size:0.90rem; margin-bottom:12px;">
+            <div><b>அலுவலக கோப்பு எண்:</b> <span style="color:#0c4a6e; font-weight:bold; font-size:1.05rem;">${file.officeNo}</span></div>
+            <div><b>நாள்:</b> ${formatTamilDate(file.officeDate)}</div>
+            ${file.prevRefNo ? `<div><b>முந்தைய ந.க.:</b> ${file.prevRefNo}</div>` : ''}
+            <div><b>பள்ளியின் பெயர்:</b> ${SCHOOL_NAMES[file.schoolId] || 'Others'}</div>
+            <div><b>பள்ளி பதிவேடு எண்:</b> ${file.schoolRegNo || '-'}</div>
+            <div><b>மனு வகை:</b> <span class="badge-cat">${file.category || 'Common'}</span></div>
+            <div><b>அலமாரி (Rack):</b> ${file.rackLocation || 'A2 Rack'}</div>
+            <div><b>தற்போது உள்ள இடம்:</b> <b style="color:#0284c7;">${isClosed ? '-' : (file.currentWith || 'பிரிவு எழுத்தர்')}</b></div>
+            <div><b>தற்போதைய நிலை:</b> <span class="badge ${file.status === 'முடிவுற்றது' ? 'badge-completed' : (file.status === 'Return' ? 'badge-return' : 'badge-pending')}">${file.status}</span></div>
+            ${file.dispatchDate ? `<div><b>தபால் அனுப்பிய தேதி:</b> ${formatTamilDate(file.dispatchDate)}</div>` : ''}
+            ${file.postTrackId ? `<div><b>Post Track ID:</b> ${file.postTrackId}</div>` : ''}
+          </div>
+          <p style="margin:8px 0; font-size:0.95rem; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;"><b>கோரிக்கை விவரம் & பொருள்:</b> ${file.subject}</p>
+          <div style="margin:12px 0;">${downloadAttachmentBtn}</div>
+          <h4 style="margin:14px 0 6px 0; color:#0c4a6e;">📋 தணிக்கை & நகர்வு வரிசை (Movement History):</h4>
+          <table style="width:100%; border-collapse:collapse; font-size:0.84rem;">
+            <thead><tr style="background:#e2e8f0;"><th style="border:1px solid #cbd5e1; padding:6px;">வ.எண்</th><th style="border:1px solid #cbd5e1; padding:6px;">தேதி & நேரம்</th><th style="border:1px solid #cbd5e1; padding:6px;">நிலை</th><th style="border:1px solid #cbd5e1; padding:6px;">குறிப்பு</th></tr></thead>
+            <tbody>${histHTML || '<tr><td colspan="4" style="text-align:center; padding:10px;">தகவல் இல்லை</td></tr>'}</tbody>
+          </table>
+        `;
+      }
+    }, 300);
+  }
+
   };
 </script>
 
 </body>
 </html>
+
